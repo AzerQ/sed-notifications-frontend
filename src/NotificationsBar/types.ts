@@ -1,12 +1,6 @@
 // Типы данных
-export type NotificationType = 'document' | 'task' | 'system';
-export type NotificationSubtype =
-    | 'Входящий документ'
-    | 'Служебная записка'
-    | 'Приказ'
-    | 'Задание на согласование'
-    | 'Задание на подписание'
-    | 'Системное уведомление';
+export type NotificationType = 'document' | 'task' | 'system' | 'other';
+export type NotificationSubtype = string;
 
 export interface ToastConfig {
     title: string;
@@ -45,7 +39,7 @@ export interface NotificationAction {
 }
 
 
-export interface Notification {
+export interface InAppNotificationData {
     id: number;
     title: string;
     type: NotificationType;

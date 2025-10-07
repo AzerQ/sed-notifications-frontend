@@ -5,10 +5,10 @@ import {NotificationFilters} from "./NotificationFilters";
 import {NotificationSort} from "./NotificationSort";
 import {Filters, Preset, ToastConfig, SortOption} from "./types";
 import {ToastProvider} from "./Toast/ToastProvider";
-import {Notification} from './types';
+import {InAppNotificationData} from './types';
 import {NotificationCard} from "./NotificationCard/NotificationCard";
 
-export const NotificationsBar: React.FC<{notifications: Notification[]}> = ({notifications}) => {
+export const NotificationsBar: React.FC<{notifications: InAppNotificationData[]}> = ({notifications}) => {
   return (
     <ToastProvider>
       {({ showToast, testToasts, togglePosition, position }) => (
@@ -29,9 +29,9 @@ const NotificationsBarContent: React.FC<{
   testToasts: () => void;
   togglePosition: () => void;
   position: 'top' | 'bottom';
-  appNotifications: Notification[];
+  appNotifications: InAppNotificationData[];
 }> = ({ showToast, testToasts, togglePosition, position, appNotifications }) => {
-  const [notifications, setnotifications] = useState<Notification[]>(appNotifications);
+  const [notifications, setnotifications] = useState<InAppNotificationData[]>(appNotifications);
   const [filters, setFilters] = useState<Filters>({
     type: '',
     subtype: '',
@@ -229,6 +229,7 @@ const NotificationsBarContent: React.FC<{
 
         {/* Filters */}
         <NotificationFilters
+          notifications={notifications}
           filters={filters}
           onFilterChange={handleFilterChange}
           onSavePreset={openModal}

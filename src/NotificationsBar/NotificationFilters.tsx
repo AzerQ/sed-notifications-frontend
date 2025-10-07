@@ -2,9 +2,10 @@ import React, {useState} from "react";
 import {ChevronDown, Filter} from "lucide-react";
 import {MaterialSelect} from "./MaterialSelect";
 import {ModalInput} from "./ModalInput";
-import {Filters, Preset} from "./types";
+import {Filters, InAppNotificationData, Preset} from "./types";
 
 export const NotificationFilters: React.FC<{
+    notifications: InAppNotificationData[],
     filters: Filters;
     onFilterChange: (key: keyof Filters, value: string) => void;
     onSavePreset: () => void;
@@ -17,6 +18,7 @@ export const NotificationFilters: React.FC<{
 }> = ({
           filters,
           onFilterChange,
+          notifications,
           onSavePreset,
           presets,
           onApplyPreset,
@@ -35,16 +37,6 @@ export const NotificationFilters: React.FC<{
         {value: 'system', label: 'Системные'}
     ];
 
-    const subtypeOptions = [
-        {value: '', label: 'Все подвиды'},
-        {value: 'Входящий документ', label: 'Входящий документ'},
-        {value: 'Служебная записка', label: 'Служебная записка'},
-        {value: 'Приказ', label: 'Приказ'},
-        {value: 'Задание на согласование', label: 'Задание на согласование'},
-        {value: 'Задание на подписание', label: 'Задание на подписание'},
-        {value: 'Системное уведомление', label: 'Системное уведомление'}
-    ];
-
     const statusOptions = [
         {value: '', label: 'Все статусы'},
         {value: 'unread', label: 'Непрочитанные'},
@@ -56,12 +48,15 @@ export const NotificationFilters: React.FC<{
         {value: 'true', label: 'Избранные'}
     ];
 
+
+    const subtypeOptions = [
+        {value: '', label: 'Все подвиды'},
+        ...notifications.map(n => ({value: n.subtype, label: n.subtype}))
+    ];
+
     const authorOptions = [
         {value: '', label: 'Все авторы'},
-        {value: 'Иван Петров', label: 'Иван Петров'},
-        {value: 'Мария Сидорова', label: 'Мария Сидорова'},
-        {value: 'Система', label: 'Система'},
-        {value: 'Алексей Козлов', label: 'Алексей Козлов'}
+        ...notifications.map(n => ({value: n.author, label: n.author}))
     ];
 
     return (

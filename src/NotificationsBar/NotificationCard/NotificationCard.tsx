@@ -1,13 +1,13 @@
 // Компоненты
 import React from "react";
-import {Notification, ToastConfig} from "../types";
+import {InAppNotificationData, ToastConfig} from "../types";
 import {Bookmark, BookmarkCheck, Calendar, Eye, EyeOff, User} from "lucide-react";
 import {NotificationActionsDropdown} from "./NotificationActionsDropdown";
 import {ActionButton} from "./ActionButton";
 import {formatDate, getTypeColorClass, getTypeIcon} from "../Common";
 
 export const NotificationCard: React.FC<{
-    notification: Notification;
+    notification: InAppNotificationData;
     onToggleRead: (id: number) => void;
     onToggleStar: (id: number) => void;
     onActionComplete: (id: number) => void;
