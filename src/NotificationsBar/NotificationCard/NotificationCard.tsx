@@ -12,7 +12,7 @@ export const NotificationCard: React.FC<{
     onToggleStar: (id: number) => void;
     onActionComplete: (id: number) => void;
     showToast: (toast: ToastConfig) => void;
-    onNotificationClick: (id: number) => void;
+    onNotificationClick?: (id: number) => void;
 }> = ({notification, onToggleRead, onToggleStar, onActionComplete, showToast, onNotificationClick}) => {
     const handleOpenCard = () => {
         if (notification.cardUrl) {
@@ -31,7 +31,7 @@ export const NotificationCard: React.FC<{
 
     const handleNotificationClick = () => {
         if (!notification.read) {
-            onNotificationClick(notification.id);
+            onNotificationClick?.call(null,notification.id);
         }
     };
 
