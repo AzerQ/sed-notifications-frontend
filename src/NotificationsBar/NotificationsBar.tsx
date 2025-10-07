@@ -248,7 +248,7 @@ const NotificationsBarContent: React.FC<{
         />
 
         {/* Notifications List */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-1 xl:grid-cols-5">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
           {filteredNotifications.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
