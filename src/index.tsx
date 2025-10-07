@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import NotificationsBar from './App';
 
 import './index.css';
+import App from "./App";
 
 /**
  * Entry point of the application
@@ -14,6 +15,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <App />
+    <App/>
   </React.StrictMode>
 );
