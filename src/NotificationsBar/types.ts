@@ -33,6 +33,10 @@ export interface Preset {
     filters: Filters & { search: string };
 }
 
+export interface SortOption {
+    field: 'date' | 'title' | 'author' | 'type';
+    order: 'asc' | 'desc';
+}
 
 export interface NotificationAction {
     name: string;

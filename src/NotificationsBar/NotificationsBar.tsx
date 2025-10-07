@@ -2,7 +2,8 @@
 import React, {useMemo, useState} from 'react';
 import { Bell, Plus, Search} from 'lucide-react';
 import {NotificationFilters} from "./NotificationFilters";
-import {Filters, Preset, ToastConfig} from "./types";
+import {NotificationSort} from "./NotificationSort";
+import {Filters, Preset, ToastConfig, SortOption} from "./types";
 import {ToastProvider} from "./Toast/ToastProvider";
 import {Notification} from './types';
 import {NotificationCard} from "./NotificationCard/NotificationCard";
@@ -38,6 +39,10 @@ const NotificationsBarContent: React.FC<{
     starred: '',
     author: ''
   });
+  const [sortOption, setSortOption] = useState<SortOption>({
+    field: 'date',
+    order: 'desc'
+  });
   const [presets, setPresets] = useState<Preset[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -63,6 +68,10 @@ const NotificationsBarContent: React.FC<{
 
   const handleFilterChange = (key: keyof Filters, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSortChange = (newSortOption: SortOption) => {
+    setSortOption(newSortOption);
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +102,8 @@ const NotificationsBarContent: React.FC<{
   };
 
   const filteredNotifications = useMemo(() => {
-    return notifications.filter(notification => {
+    // Apply filters
+    const filtered = notifications.filter(notification => {
       // Apply search filter
       if (searchTerm && !notification.title.toLowerCase().includes(searchTerm.toLowerCase()) && 
           !notification.description.toLowerCase().includes(searchTerm.toLowerCase())) {
@@ -129,8 +139,42 @@ const NotificationsBarContent: React.FC<{
       }
       
       return true;
-    }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [notifications, filters, searchTerm]);
+    });
+
+    // Apply sorting
+    return filtered.sort((a, b) => {
+      let aValue: string | number;
+      let bValue: string | number;
+
+      switch (sortOption.field) {
+        case 'date':
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
+          break;
+        case 'title':
+          aValue = a.title.toLowerCase();
+          bValue = b.title.toLowerCase();
+          break;
+        case 'author':
+          aValue = a.author.toLowerCase();
+          bValue = b.author.toLowerCase();
+          break;
+        case 'type':
+          aValue = a.type;
+          bValue = b.type;
+          break;
+        default:
+          aValue = new Date(a.date).getTime();
+          bValue = new Date(b.date).getTime();
+      }
+
+      if (sortOption.order === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+  }, [notifications, filters, searchTerm, sortOption]);
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -194,6 +238,12 @@ const NotificationsBarContent: React.FC<{
           onModalOpen={openModal}
           onModalClose={closeModal}
           onModalSave={savePreset}
+        />
+
+        {/* Sort */}
+        <NotificationSort
+          sortOption={sortOption}
+          onSortChange={handleSortChange}
         />
 
         {/* Notifications List */}
