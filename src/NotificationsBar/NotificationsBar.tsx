@@ -212,7 +212,7 @@ const NotificationsBarContent: React.FC<{
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search Bar */}
         <div className="mb-6 max-w-2xl mx-auto">
           <div className="relative">
@@ -248,24 +248,25 @@ const NotificationsBarContent: React.FC<{
         />
 
         {/* Notifications List */}
-        <div className="space-y-4">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-5">
           {filteredNotifications.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="col-span-full text-center py-12">
               <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Уведомления не найдены</h3>
               <p className="text-gray-500">Попробуйте изменить фильтры или выполнить поиск</p>
             </div>
           ) : (
             filteredNotifications.map(notification => (
-              <NotificationCard
-                key={notification.id}
-                notification={notification}
-                onToggleRead={toggleRead}
-                onToggleStar={toggleStar}
-                onActionComplete={markNotificationAsRead}
-                showToast={showToast}
-                onNotificationClick={markNotificationAsRead}
-              />
+              <div key={notification.id} className="h-full">
+                <NotificationCard
+                  notification={notification}
+                  onToggleRead={toggleRead}
+                  onToggleStar={toggleStar}
+                  onActionComplete={markNotificationAsRead}
+                  showToast={showToast}
+                  onNotificationClick={markNotificationAsRead}
+                />
+              </div>
             ))
           )}
         </div>
