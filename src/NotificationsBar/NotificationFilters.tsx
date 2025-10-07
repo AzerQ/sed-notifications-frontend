@@ -56,6 +56,14 @@ export const NotificationFilters: React.FC<{
         {value: 'true', label: 'Избранные'}
     ];
 
+    const authorOptions = [
+        {value: '', label: 'Все авторы'},
+        {value: 'Иван Петров', label: 'Иван Петров'},
+        {value: 'Мария Сидорова', label: 'Мария Сидорова'},
+        {value: 'Система', label: 'Система'},
+        {value: 'Алексей Козлов', label: 'Алексей Козлов'}
+    ];
+
     return (
         <>
             <div className="bg-white rounded-lg border p-4 mb-6">
@@ -65,33 +73,55 @@ export const NotificationFilters: React.FC<{
                         <span className="font-medium text-gray-700">Фильтры:</span>
                     </div>
 
-                    <MaterialSelect
-                        options={typeOptions}
-                        value={filters.type}
-                        onChange={(value) => onFilterChange('type', value)}
-                        className="min-w-[150px]"
-                    />
+                    <div className="flex flex-col">
+                        <label className="text-xs text-gray-500 mb-1">Тип</label>
+                        <MaterialSelect
+                            options={typeOptions}
+                            value={filters.type}
+                            onChange={(value) => onFilterChange('type', value)}
+                            className="min-w-[150px]"
+                        />
+                    </div>
 
-                    <MaterialSelect
-                        options={subtypeOptions}
-                        value={filters.subtype}
-                        onChange={(value) => onFilterChange('subtype', value)}
-                        className="min-w-[180px]"
-                    />
+                    <div className="flex flex-col">
+                        <label className="text-xs text-gray-500 mb-1">Подтип</label>
+                        <MaterialSelect
+                            options={subtypeOptions}
+                            value={filters.subtype}
+                            onChange={(value) => onFilterChange('subtype', value)}
+                            className="min-w-[180px]"
+                        />
+                    </div>
 
-                    <MaterialSelect
-                        options={statusOptions}
-                        value={filters.status}
-                        onChange={(value) => onFilterChange('status', value)}
-                        className="min-w-[150px]"
-                    />
+                    <div className="flex flex-col">
+                        <label className="text-xs text-gray-500 mb-1">Статус</label>
+                        <MaterialSelect
+                            options={statusOptions}
+                            value={filters.status}
+                            onChange={(value) => onFilterChange('status', value)}
+                            className="min-w-[150px]"
+                        />
+                    </div>
 
-                    <MaterialSelect
-                        options={starredOptions}
-                        value={filters.starred}
-                        onChange={(value) => onFilterChange('starred', value)}
-                        className="min-w-[120px]"
-                    />
+                    <div className="flex flex-col">
+                        <label className="text-xs text-gray-500 mb-1">Избранные</label>
+                        <MaterialSelect
+                            options={starredOptions}
+                            value={filters.starred}
+                            onChange={(value) => onFilterChange('starred', value)}
+                            className="min-w-[120px]"
+                        />
+                    </div>
+
+                    <div className="flex flex-col">
+                        <label className="text-xs text-gray-500 mb-1">Автор</label>
+                        <MaterialSelect
+                            options={authorOptions}
+                            value={filters.author}
+                            onChange={(value) => onFilterChange('author', value)}
+                            className="min-w-[150px]"
+                        />
+                    </div>
 
                     <div className="relative">
                         <button

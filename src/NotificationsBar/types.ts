@@ -24,6 +24,7 @@ export interface Filters {
     subtype: string;
     status: string;
     starred: string;
+    author: string;
 }
 
 export interface Preset {

@@ -35,7 +35,8 @@ const NotificationsBarContent: React.FC<{
     type: '',
     subtype: '',
     status: '',
-    starred: ''
+    starred: '',
+    author: ''
   });
   const [presets, setPresets] = useState<Preset[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -119,6 +120,11 @@ const NotificationsBarContent: React.FC<{
       
       // Apply starred filter
       if (filters.starred === 'true' && !notification.starred) {
+        return false;
+      }
+      
+      // Apply author filter
+      if (filters.author && notification.author !== filters.author) {
         return false;
       }
       
