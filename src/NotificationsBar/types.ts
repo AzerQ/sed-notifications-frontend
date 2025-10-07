@@ -13,6 +13,7 @@ export interface ToastConfig {
     message: string;
     type?: 'info' | 'success' | 'warning' | 'error';
     duration?: number;
+    actionUrl?: string;
 }
 
 export interface Toast extends ToastConfig {

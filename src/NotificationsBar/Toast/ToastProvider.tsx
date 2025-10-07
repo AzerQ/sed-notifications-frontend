@@ -28,7 +28,8 @@ export const ToastProvider: React.FC<{
         showToast({
             title: 'Успех!',
             message: 'Документ успешно согласован',
-            type: 'success'
+            type: 'success',
+            actionUrl: 'https://google.com'
         });
 
         setTimeout(() => {

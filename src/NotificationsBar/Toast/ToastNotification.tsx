@@ -1,6 +1,7 @@
 // Toast Notification Component
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {AlertCircle, Bell, CheckCircle} from "lucide-react";
+import { executeNotificationAction, tryExecuteAppAction } from "../notificationsActions";
 
 export const ToastNotification: React.FC<{
     id: number;
@@ -9,7 +10,8 @@ export const ToastNotification: React.FC<{
     type?: 'info' | 'success' | 'warning' | 'error';
     duration?: number;
     onClose: (id: number) => void;
-}> = ({id, title, message, type = 'info', duration = 5000, onClose}) => {
+    actionUrl?: string;
+}> = ({id, title, message, type = 'info', duration = 5000, onClose, actionUrl}) => {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
@@ -47,8 +49,19 @@ export const ToastNotification: React.FC<{
         }
     };
 
+    const onToastClick = useCallback(() => { 
+        const isHttpLink = actionUrl?.startsWith('http://') || actionUrl?.startsWith('https://');
+        if (actionUrl && isHttpLink) {
+            window.open(actionUrl, '_blank');
+        }
+        else if (actionUrl) {
+            tryExecuteAppAction(actionUrl);
+        }
+    }, [actionUrl, id, onClose]);
+    
     return (
         <div
+            onClick={onToastClick}
             className={`max-w-sm w-full p-4 border rounded-lg shadow-lg transform transition-all duration-300 mb-2 ${
                 isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
             } ${getTypeStyles()}`}
