@@ -41,7 +41,7 @@ export const NotificationCard: React.FC<{
     return (
         <div
             className={`border rounded-lg p-4 hover:shadow-md transition-shadow duration-200 cursor-pointer ${
-                notification.read ? 'bg-white border-gray-200' : 'bg-blue-50 border-blue-300'
+                notification.read ? 'bg-white border-gray-200' : 'bg-blue-100 border-blue-300'
             }`}
             onClick={handleNotificationClick}
         >
