@@ -1,6 +1,5 @@
-// App.tsx
 import React, {useMemo, useState} from 'react';
-import { Bell, Plus, Search} from 'lucide-react';
+import { Plus, Search} from 'lucide-react';
 import {NotificationFilters} from "./NotificationFilters";
 import {NotificationSort} from "./NotificationSort";
 import {Filters, Preset, ToastConfig, SortOption} from "./types";
@@ -191,7 +190,7 @@ const NotificationsBarContent: React.FC<{
           </span>
         </h2>
       )}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
         {notifications.length === 0 ? (
           emptyMessage && (
             <div className="col-span-full text-center py-8">
@@ -216,42 +215,11 @@ const NotificationsBarContent: React.FC<{
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center space-x-3">
-              <Bell className="w-8 h-8 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900">Система уведомлений</h1>
-              {unreadCount > 0 && (
-                <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                  {unreadCount} непрочитанных
-                </span>
-              )}
-            </div>
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={togglePosition}
-                className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
-              >
-                Позиция: {position === 'top' ? 'Сверху' : 'Снизу'}
-              </button>
-              <button
-                onClick={testToasts}
-                className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Тест уведомлений</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="h-full bg-gray-50 flex flex-col">
+      {/* Controls Section */}
+      <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
         {/* Search Bar */}
-        <div className="mb-6 max-w-2xl mx-auto">
+        <div className="mb-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -264,7 +232,35 @@ const NotificationsBarContent: React.FC<{
           </div>
         </div>
 
-        {/* Filters */}
+        <div className="flex flex-wrap gap-4 items-center justify-between">
+          <div className="flex items-center space-x-2">
+            {unreadCount > 0 && (
+              <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                {unreadCount} непрочитанных
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={togglePosition}
+              className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+            >
+              Позиция: {position === 'top' ? 'Сверху' : 'Снизу'}
+            </button>
+            <button
+              onClick={testToasts}
+              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Тест уведомлений</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Filters Section */}
+      <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
         <NotificationFilters
           notifications={notifications}
           filters={filters}
@@ -278,16 +274,19 @@ const NotificationsBarContent: React.FC<{
           onModalSave={savePreset}
         />
 
-        {/* Sort */}
         <NotificationSort
           sortOption={sortOption}
           onSortChange={handleSortChange}
         />
+      </div>
 
-        {/* Notifications Lists */}
+      {/* Notifications Content */}
+      <div className="flex-1 overflow-y-auto p-6">
         {starredNotifications.length === 0 && regularNotifications.length === 0 ? (
           <div className="text-center py-12">
-            <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <Search className="w-8 h-8 text-gray-400" />
+            </div>
             <h3 className="text-lg font-medium text-gray-900 mb-2">Уведомления не найдены</h3>
             <p className="text-gray-500">Попробуйте изменить фильтры или выполнить поиск</p>
           </div>
@@ -315,9 +314,8 @@ const NotificationsBarContent: React.FC<{
             )}
           </>
         )}
-      </main>
+      </div>
     </div>
   );
 };
 
-export default NotificationsBar;
