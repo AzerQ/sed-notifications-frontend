@@ -112,9 +112,18 @@ describe('App Integration Tests', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    // Переходим по Tab к колокольчику
+    // Переходим по Tab к кнопке тест уведомлений
     await user.tab();
-    
+    const testButton = screen.getByTestId('app-test-toasts-button');
+    expect(testButton).toHaveFocus();
+
+    // Переходим ко второй кнопке (позиция)
+    await user.tab();
+    const positionButton = screen.getByTestId('app-toggle-position-button');
+    expect(positionButton).toHaveFocus();
+
+    // Переходим к колокольчику
+    await user.tab();
     const bellButton = screen.getByLabelText(/Открыть центр уведомлений/);
     expect(bellButton).toHaveFocus();
 
@@ -127,6 +136,29 @@ describe('App Integration Tests', () => {
     await waitFor(() => {
       expect(screen.queryByText('Новые уведомления')).not.toBeInTheDocument();
     });
+  });
+
+  it('должен показывать toast при нажатии кнопки тестирования', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const testButton = screen.getByTestId('app-test-toasts-button');
+    await user.click(testButton);
+
+    await waitFor(() => {
+      expect(screen.getByText('Успех!')).toBeInTheDocument();
+    });
+  });
+
+  it('должен переключать позицию toast', async () => {
+    const user = userEvent.setup();
+    render(<App />);
+
+    const positionButton = screen.getByTestId('app-toggle-position-button');
+    expect(screen.getByText('Позиция: Сверху')).toBeInTheDocument();
+    
+    await user.click(positionButton);
+    expect(screen.getByText('Позиция: Снизу')).toBeInTheDocument();
   });
 
   it('должен работать с toast уведомлениями', async () => {

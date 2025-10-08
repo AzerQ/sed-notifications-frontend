@@ -119,28 +119,6 @@ describe('NotificationsBar', () => {
     expect(defaultProps.onNotificationsChange).toHaveBeenCalled();
   });
 
-  it('должен показывать toast при тестировании', async () => {
-    const user = userEvent.setup();
-    render(<NotificationsBar {...defaultProps} />);
-
-    const testButton = screen.getByText('Тест уведомлений');
-    await user.click(testButton);
-
-    await waitFor(() => {
-      expect(screen.getByText('Успех!')).toBeInTheDocument();
-    });
-  });
-
-  it('должен переключать позицию toast', async () => {
-    const user = userEvent.setup();
-    render(<NotificationsBar {...defaultProps} />);
-
-    const positionButton = screen.getByText('Позиция: Сверху');
-    await user.click(positionButton);
-
-    expect(screen.getByText('Позиция: Снизу')).toBeInTheDocument();
-  });
-
   it('должен отображать сообщение когда нет результатов поиска', async () => {
     const user = userEvent.setup();
     render(<NotificationsBar {...defaultProps} />);

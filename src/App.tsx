@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { Plus } from 'lucide-react';
 import { NotificationCenter } from "./NotificationsBar";
 import { mockNotifications } from "./MockNotifications";
 import { InAppNotificationData } from "./NotificationsBar/types";
+import { ToastProvider } from "./NotificationsBar/Toast/ToastProvider";
 
 const App: React.FC = () => {
     const [notifications, setNotifications] = useState<InAppNotificationData[]>(mockNotifications);
@@ -11,26 +13,43 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100" data-testid="app-root">
-            {/* Header with notification bell */}
-            <header className="bg-white shadow-sm border-b border-gray-200" data-testid="app-header">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center" data-testid="app-header-logo">
-                            <h1 className="text-xl font-semibold text-gray-900">
-                                Система документооборота
-                            </h1>
+        <ToastProvider>
+            {({ showToast, testToasts, togglePosition, position }) => (
+                <div className="min-h-screen bg-gray-100" data-testid="app-root">
+                    {/* Header with notification bell */}
+                    <header className="bg-white shadow-sm border-b border-gray-200" data-testid="app-header">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                            <div className="flex justify-between items-center h-16">
+                                <div className="flex items-center" data-testid="app-header-logo">
+                                    <h1 className="text-xl font-semibold text-gray-900">
+                                        Система документооборота
+                                    </h1>
+                                </div>
+                                
+                                <div className="flex items-center space-x-4" data-testid="app-header-actions">
+                                    <button
+                                        onClick={testToasts}
+                                        className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+                                        data-testid="app-test-toasts-button"
+                                    >
+                                        <Plus className="w-4 h-4" />
+                                        <span>Тест уведомлений</span>
+                                    </button>
+                                    <button
+                                        onClick={togglePosition}
+                                        className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+                                        data-testid="app-toggle-position-button"
+                                    >
+                                        Позиция: {position === 'top' ? 'Сверху' : 'Снизу'}
+                                    </button>
+                                    <NotificationCenter 
+                                        notifications={notifications} 
+                                        onNotificationUpdate={handleNotificationUpdate}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div className="flex items-center space-x-4" data-testid="app-header-actions">
-                            <NotificationCenter 
-                                notifications={notifications} 
-                                onNotificationUpdate={handleNotificationUpdate}
-                            />
-                        </div>
-                    </div>
-                </div>
-            </header>
+                    </header>
 
             {/* Main content */}
             <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="app-main-content">
@@ -80,6 +99,8 @@ const App: React.FC = () => {
                 </div>
             </main>
         </div>
+            )}
+        </ToastProvider>
     );
 };
 

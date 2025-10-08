@@ -1,5 +1,5 @@
 import React, {useMemo, useState} from 'react';
-import { Plus, Search} from 'lucide-react';
+import { Search} from 'lucide-react';
 import {NotificationFilters} from "./NotificationFilters";
 import {NotificationSort} from "./NotificationSort";
 import {Filters, Preset, ToastConfig, SortOption} from "./types";
@@ -13,12 +13,9 @@ export const NotificationsBar: React.FC<{
 }> = ({notifications, onNotificationsChange}) => {
   return (
     <ToastProvider>
-      {({ showToast, testToasts, togglePosition, position }) => (
+      {({ showToast }) => (
         <NotificationsBarContent
-          showToast={showToast} 
-          testToasts={testToasts}
-          togglePosition={togglePosition}
-          position={position}
+          showToast={showToast}
           appNotifications={notifications}
           onNotificationsChange={onNotificationsChange}
         />
@@ -29,12 +26,9 @@ export const NotificationsBar: React.FC<{
 
 const NotificationsBarContent: React.FC<{
   showToast: (toast: ToastConfig) => void;
-  testToasts: () => void;
-  togglePosition: () => void;
-  position: 'top' | 'bottom';
   appNotifications: InAppNotificationData[];
   onNotificationsChange?: (notifications: InAppNotificationData[]) => void;
-}> = ({ showToast, testToasts, togglePosition, position, appNotifications, onNotificationsChange }) => {
+}> = ({ showToast, appNotifications, onNotificationsChange }) => {
   const [notifications, setnotifications] = useState<InAppNotificationData[]>(appNotifications);
   const [filters, setFilters] = useState<Filters>({
     type: '',
@@ -253,24 +247,6 @@ const NotificationsBarContent: React.FC<{
                 {unreadCount} непрочитанных
               </span>
             )}
-          </div>
-          
-          <div className="flex items-center space-x-2">
-            <button
-              onClick={togglePosition}
-              className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
-              data-testid="notifications-bar-toggle-position-button"
-            >
-              Позиция: {position === 'top' ? 'Сверху' : 'Снизу'}
-            </button>
-            <button
-              onClick={testToasts}
-              className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
-              data-testid="notifications-bar-test-toasts-button"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Тест уведомлений</span>
-            </button>
           </div>
         </div>
       </div>
