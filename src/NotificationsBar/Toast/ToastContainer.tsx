@@ -15,7 +15,7 @@ export const ToastContainer: React.FC<{
         : 'fixed bottom-4 right-4 z-50';
 
     return (
-        <div className={containerClasses}>
+        <div className={containerClasses} data-testid="toast-container" data-position={position}>
             {toasts.map(toast => (
                 <ToastNotification
                     key={toast.id}

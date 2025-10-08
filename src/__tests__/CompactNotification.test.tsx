@@ -26,30 +26,24 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    expect(screen.getByText('Test Title')).toBeInTheDocument();
-    expect(screen.getByText('Test Description')).toBeInTheDocument();
+    const compactNotification = screen.getByTestId('compact-notification');
+    expect(compactNotification).toBeInTheDocument();
+    expect(compactNotification).toHaveAttribute('data-notification-id', notification.id.toString());
+    
+    expect(screen.getByTestId('compact-notification-title')).toHaveTextContent('Test Title');
+    expect(screen.getByTestId('compact-notification-description')).toHaveTextContent('Test Description');
   });
 
   it('должен отображать правильную иконку в зависимости от типа', () => {
-    const { container, rerender } = render(
-      <CompactNotification 
-        notification={createMockNotification({ type: 'document' })} 
-        onRead={mockOnRead} 
-      />
-    );
+    const notification = createMockNotification({ type: 'document' });
     
-    // Для document должна быть иконка FileText
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    rerender(
-      <CompactNotification 
-        notification={createMockNotification({ type: 'system' })} 
-        onRead={mockOnRead} 
-      />
-    );
+    const icon = screen.getByTestId('compact-notification-icon');
+    expect(icon).toBeInTheDocument();
     
-    // Для system должна быть иконка Settings
-    expect(container.querySelector('svg')).toBeInTheDocument();
+    const compactNotification = screen.getByTestId('compact-notification');
+    expect(compactNotification).toHaveAttribute('data-notification-type', 'document');
   });
 
   it('должен отображать относительное время', () => {
@@ -62,7 +56,8 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    expect(screen.getByText('2 ч назад')).toBeInTheDocument();
+    const timeElement = screen.getByTestId('compact-notification-time');
+    expect(timeElement).toHaveTextContent('2 ч назад');
   });
 
   it('должен отображать "только что" для очень недавних уведомлений', () => {
@@ -73,7 +68,8 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    expect(screen.getByText('только что')).toBeInTheDocument();
+    const timeElement = screen.getByTestId('compact-notification-time');
+    expect(timeElement).toHaveTextContent('только что');
   });
 
   it('должен отображать ссылку "Открыть →" для уведомлений с cardUrl', () => {
@@ -83,7 +79,8 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    expect(screen.getByText('Открыть →')).toBeInTheDocument();
+    const linkIndicator = screen.getByTestId('compact-notification-link-indicator');
+    expect(linkIndicator).toHaveTextContent('Открыть →');
   });
 
   it('не должен отображать ссылку для уведомлений без cardUrl', () => {
@@ -93,7 +90,7 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    expect(screen.queryByText('Открыть →')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('compact-notification-link-indicator')).not.toBeInTheDocument();
   });
 
   it('должен вызывать onRead при клике', async () => {
@@ -102,8 +99,8 @@ describe('CompactNotification', () => {
 
     render(<CompactNotification notification={notification} onRead={mockOnRead} />);
     
-    const notificationElement = screen.getByText('Mock Notification').closest('div');
-    await user.click(notificationElement as Element);
+    const notificationElement = screen.getByTestId('compact-notification');
+    await user.click(notificationElement);
     
     expect(mockOnRead).toHaveBeenCalledWith(123);
   });

@@ -194,25 +194,25 @@ const NotificationsBarContent: React.FC<{
     title?: string;
     emptyMessage?: string;
   }> = ({ notifications, title, emptyMessage }) => (
-    <div className="mb-8">
+    <div className="mb-8" data-testid="notifications-list" data-section={title?.includes('Избранные') ? 'starred' : 'regular'}>
       {title && (
-        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center" data-testid="notifications-list-title">
           {title}
-          <span className="ml-2 bg-gray-100 text-gray-600 text-sm font-medium px-2.5 py-0.5 rounded-full">
+          <span className="ml-2 bg-gray-100 text-gray-600 text-sm font-medium px-2.5 py-0.5 rounded-full" data-testid="notifications-list-count">
             {notifications.length}
           </span>
         </h2>
       )}
-      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3" data-testid="notifications-list-grid">
         {notifications.length === 0 ? (
           emptyMessage && (
-            <div className="col-span-full text-center py-8">
+            <div className="col-span-full text-center py-8" data-testid="notifications-list-empty">
               <p className="text-gray-500">{emptyMessage}</p>
             </div>
           )
         ) : (
           notifications.map(notification => (
-            <div key={notification.id} className="h-full">
+            <div key={notification.id} className="h-full" data-testid="notifications-list-item">
               <NotificationCard
                 notification={notification}
                 onToggleRead={toggleRead}
@@ -228,11 +228,11 @@ const NotificationsBarContent: React.FC<{
   );
 
   return (
-    <div className="h-full bg-gray-50 flex flex-col">
+    <div className="h-full bg-gray-50 flex flex-col" data-testid="notifications-bar">
       {/* Controls Section */}
-      <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
+      <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0" data-testid="notifications-bar-controls">
         {/* Search Bar */}
-        <div className="mb-4">
+        <div className="mb-4" data-testid="notifications-bar-search-section">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
             <input
@@ -241,14 +241,15 @@ const NotificationsBarContent: React.FC<{
               value={searchTerm}
               onChange={handleSearchChange}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              data-testid="notifications-bar-search-input"
             />
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 items-center justify-between">
+        <div className="flex flex-wrap gap-4 items-center justify-between" data-testid="notifications-bar-actions">
           <div className="flex items-center space-x-2">
             {unreadCount > 0 && (
-              <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+              <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full" data-testid="notifications-bar-unread-count">
                 {unreadCount} непрочитанных
               </span>
             )}
@@ -258,12 +259,14 @@ const NotificationsBarContent: React.FC<{
             <button
               onClick={togglePosition}
               className="px-3 py-2 text-sm bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors"
+              data-testid="notifications-bar-toggle-position-button"
             >
               Позиция: {position === 'top' ? 'Сверху' : 'Снизу'}
             </button>
             <button
               onClick={testToasts}
               className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+              data-testid="notifications-bar-test-toasts-button"
             >
               <Plus className="w-4 h-4" />
               <span>Тест уведомлений</span>
@@ -294,9 +297,9 @@ const NotificationsBarContent: React.FC<{
       </div>
 
       {/* Notifications Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="flex-1 overflow-y-auto p-6" data-testid="notifications-bar-content">
         {starredNotifications.length === 0 && regularNotifications.length === 0 ? (
-          <div className="text-center py-12">
+          <div className="text-center py-12" data-testid="notifications-bar-empty-state">
             <div className="w-16 h-16 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
               <Search className="w-8 h-8 text-gray-400" />
             </div>

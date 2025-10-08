@@ -11,18 +11,18 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-gray-100" data-testid="app-root">
             {/* Header with notification bell */}
-            <header className="bg-white shadow-sm border-b border-gray-200">
+            <header className="bg-white shadow-sm border-b border-gray-200" data-testid="app-header">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center h-16">
-                        <div className="flex items-center">
+                        <div className="flex items-center" data-testid="app-header-logo">
                             <h1 className="text-xl font-semibold text-gray-900">
                                 Система документооборота
                             </h1>
                         </div>
                         
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-4" data-testid="app-header-actions">
                             <NotificationCenter 
                                 notifications={notifications} 
                                 onNotificationUpdate={handleNotificationUpdate}
@@ -33,8 +33,8 @@ const App: React.FC = () => {
             </header>
 
             {/* Main content */}
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="bg-white rounded-lg shadow p-6">
+            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" data-testid="app-main-content">
+                <div className="bg-white rounded-lg shadow p-6" data-testid="app-welcome-section">
                     <h2 className="text-2xl font-bold text-gray-900 mb-4">
                         Добро пожаловать в систему!
                     </h2>
@@ -43,7 +43,7 @@ const App: React.FC = () => {
                             Нажмите на иконку колокольчика в правом верхнем углу, чтобы открыть 
                             боковое меню с новыми уведомлениями.
                         </p>
-                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4" data-testid="app-features-info">
                             <h3 className="font-semibold text-blue-900 mb-2">Функции системы уведомлений:</h3>
                             <ul className="text-sm text-blue-800 space-y-1">
                                 <li>• Компактное боковое меню с непрочитанными уведомлениями</li>
@@ -53,22 +53,22 @@ const App: React.FC = () => {
                                 <li>• Полная история с фильтрами, сортировкой и поиском</li>
                             </ul>
                         </div>
-                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                        <div className="bg-gray-50 border border-gray-200 rounded-lg p-4" data-testid="app-stats-section">
                             <h4 className="font-medium text-gray-900 mb-2">Статистика уведомлений:</h4>
                             <div className="grid grid-cols-3 gap-4 text-center">
-                                <div>
+                                <div data-testid="app-stats-total">
                                     <div className="text-2xl font-bold text-blue-600">
                                         {notifications.length}
                                     </div>
                                     <div className="text-sm text-gray-600">Всего</div>
                                 </div>
-                                <div>
+                                <div data-testid="app-stats-unread">
                                     <div className="text-2xl font-bold text-red-600">
                                         {notifications.filter(n => !n.read).length}
                                     </div>
                                     <div className="text-sm text-gray-600">Непрочитанных</div>
                                 </div>
-                                <div>
+                                <div data-testid="app-stats-starred">
                                     <div className="text-2xl font-bold text-yellow-600">
                                         {notifications.filter(n => n.starred).length}
                                     </div>

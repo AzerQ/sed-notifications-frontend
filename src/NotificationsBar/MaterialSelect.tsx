@@ -40,7 +40,7 @@ export const MaterialSelect: React.FC<{
     }, []);
 
     return (
-        <div className={`relative ${className}`} ref={selectRef}>
+        <div className={`relative ${className}`} ref={selectRef} data-testid="material-select">
             <div
                 role="button"
                 tabIndex={disabled ? -1 : 0}
@@ -53,20 +53,25 @@ export const MaterialSelect: React.FC<{
                         : 'bg-white border-gray-300 hover:border-gray-400 focus:border-blue-500'
                 }`}
                 onClick={toggleDropdown}
+                data-testid="material-select-trigger"
+                data-value={value}
             >
-        <span className={selectedOption ? "text-gray-900" : "text-gray-500"}>
+        <span className={selectedOption ? "text-gray-900" : "text-gray-500"} data-testid="material-select-value">
           {selectedOption ? selectedOption.label : placeholder}
         </span>
                 <ChevronDown
                     className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''} ${
                         disabled ? 'text-gray-400' : 'text-gray-500'
                     }`}
+                    data-testid="material-select-chevron"
                 />
             </div>
 
             {isOpen && !disabled && (
                 <div
-                    className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto">
+                    className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg max-h-60 overflow-auto"
+                    data-testid="material-select-dropdown"
+                >
                     {options.map((option) => (
                         <div
                             key={option.value}
@@ -74,6 +79,9 @@ export const MaterialSelect: React.FC<{
                                 option.value === value ? 'bg-blue-100 text-blue-700' : 'text-gray-700'
                             }`}
                             onClick={() => handleOptionClick(option.value)}
+                            data-testid={`material-select-option-${option.value}`}
+                            data-option-value={option.value}
+                            data-option-label={option.label}
                         >
                             {option.label}
                         </div>

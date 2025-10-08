@@ -56,14 +56,14 @@ export const NotificationFilters: React.FC<{
 
     return (
         <>
-            <div className="bg-white rounded-lg border p-4 mb-6">
-                <div className="flex flex-wrap items-center gap-4">
+            <div className="bg-white rounded-lg border p-4 mb-6" data-testid="notification-filters">
+                <div className="flex flex-wrap items-center gap-4" data-testid="notification-filters-container">
                     <div className="flex items-center space-x-2">
                         <Filter className="w-4 h-4 text-gray-500"/>
                         <span className="font-medium text-gray-700">Фильтры:</span>
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" data-testid="notification-filters-type">
                         <label className="text-xs text-gray-500 mb-1">Тип</label>
                         <MaterialSelect
                             options={typeOptions}
@@ -73,7 +73,7 @@ export const NotificationFilters: React.FC<{
                         />
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" data-testid="notification-filters-subtype">
                         <label className="text-xs text-gray-500 mb-1">Подтип</label>
                         <MaterialSelect
                             options={subtypeOptions}
@@ -83,7 +83,7 @@ export const NotificationFilters: React.FC<{
                         />
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" data-testid="notification-filters-status">
                         <label className="text-xs text-gray-500 mb-1">Статус</label>
                         <MaterialSelect
                             options={statusOptions}
@@ -93,7 +93,7 @@ export const NotificationFilters: React.FC<{
                         />
                     </div>
 
-                    <div className="flex flex-col">
+                    <div className="flex flex-col" data-testid="notification-filters-author">
                         <label className="text-xs text-gray-500 mb-1">Автор</label>
                         <MaterialSelect
                             options={authorOptions}
@@ -103,10 +103,11 @@ export const NotificationFilters: React.FC<{
                         />
                     </div>
 
-                    <div className="relative">
+                    <div className="relative" data-testid="notification-filters-presets">
                         <button
                             onClick={() => setShowPresets(!showPresets)}
                             className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-800"
+                            data-testid="notification-filters-presets-toggle"
                         >
                             <span>Пресеты</span>
                             <ChevronDown className={`w-4 h-4 transition-transform ${showPresets ? 'rotate-180' : ''}`}/>
@@ -114,7 +115,9 @@ export const NotificationFilters: React.FC<{
 
                         {showPresets && (
                             <div
-                                className="absolute top-full left-0 mt-2 bg-white border rounded-lg shadow-lg z-10 min-w-48">
+                                className="absolute top-full left-0 mt-2 bg-white border rounded-lg shadow-lg z-10 min-w-48"
+                                data-testid="notification-filters-presets-dropdown"
+                            >
                                 <div className="p-2">
                                     <button
                                         onClick={() => {
@@ -122,6 +125,7 @@ export const NotificationFilters: React.FC<{
                                             setShowPresets(false);
                                         }}
                                         className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded"
+                                        data-testid="notification-filters-save-preset-button"
                                     >
                                         Сохранить текущий фильтр
                                     </button>
@@ -133,6 +137,8 @@ export const NotificationFilters: React.FC<{
                                                 setShowPresets(false);
                                             }}
                                             className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100 rounded"
+                                            data-testid={`notification-filters-preset-${index}`}
+                                            data-preset-name={preset.name}
                                         >
                                             {preset.name}
                                         </button>

@@ -60,7 +60,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
   };
 
   return (
-    <>
+    <div data-testid="notification-center">
       <NotificationBell 
         unreadCount={unreadCount} 
         onClick={openSidebar} 
@@ -86,6 +86,6 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
           onNotificationsChange={updateNotifications}
         />
       </Modal>
-    </>
+    </div>
   );
 };

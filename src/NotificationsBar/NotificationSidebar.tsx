@@ -48,27 +48,28 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" data-testid="notification-sidebar-overlay">
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black bg-opacity-30 transition-opacity"
         onClick={onClose}
+        data-testid="notification-sidebar-backdrop"
       />
       
       {/* Sidebar */}
       <div className={`
         fixed top-0 right-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-      `}>
+      `} data-testid="notification-sidebar">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0" data-testid="notification-sidebar-header">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-gray-700" />
             <h2 className="text-lg font-semibold text-gray-900">
               Новые уведомления
             </h2>
             {unreadNotifications.length > 0 && (
-              <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full">
+              <span className="bg-red-100 text-red-800 text-xs font-medium px-2 py-1 rounded-full" data-testid="notification-sidebar-unread-count">
                 {unreadNotifications.length}
               </span>
             )}
@@ -77,16 +78,18 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
             onClick={onClose}
             className="p-1 hover:bg-gray-200 rounded-full transition-colors"
             aria-label="Закрыть панель уведомлений"
+            data-testid="notification-sidebar-close-button"
           >
             <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
         {/* Full History Button */}
-        <div className="p-4 border-b border-gray-200 flex-shrink-0">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0" data-testid="notification-sidebar-full-history-section">
           <button
             onClick={handleFullHistoryClick}
             className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            data-testid="notification-sidebar-full-history-button"
           >
             <Archive className="w-4 h-4" />
             <span>Вся история уведомлений</span>
@@ -94,9 +97,9 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
 
         {/* Notifications List */}
-        <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin" data-testid="notification-sidebar-content">
           {unreadNotifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8">
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8" data-testid="notification-sidebar-empty-state">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <Bell className="w-8 h-8 text-gray-400" />
               </div>
@@ -108,7 +111,7 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-gray-100" data-testid="notification-sidebar-list">
               {unreadNotifications.map(notification => (
                 <CompactNotification
                   key={notification.id}
@@ -122,12 +125,13 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
         {/* Footer */}
         {unreadNotifications.length > 0 && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+          <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0" data-testid="notification-sidebar-footer">
             <button
               onClick={() => {
                 markAllAsRead();
               }}
               className="w-full text-sm text-gray-600 hover:text-gray-800 transition-colors"
+              data-testid="notification-sidebar-mark-all-read-button"
             >
               Отметить все как прочитанные
             </button>

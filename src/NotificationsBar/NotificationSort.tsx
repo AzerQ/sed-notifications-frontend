@@ -30,14 +30,14 @@ export const NotificationSort: React.FC<{
     };
 
     return (
-        <div className="bg-white rounded-lg border p-4 mb-6">
-            <div className="flex flex-wrap items-center gap-4">
+        <div className="bg-white rounded-lg border p-4 mb-6" data-testid="notification-sort">
+            <div className="flex flex-wrap items-center gap-4" data-testid="notification-sort-container">
                 <div className="flex items-center space-x-2">
                     <ArrowUpDown className="w-4 h-4 text-gray-500"/>
                     <span className="font-medium text-gray-700">Сортировка:</span>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col" data-testid="notification-sort-field">
                     <label className="text-xs text-gray-500 mb-1">Поле</label>
                     <MaterialSelect
                         options={fieldOptions}
@@ -47,7 +47,7 @@ export const NotificationSort: React.FC<{
                     />
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col" data-testid="notification-sort-order">
                     <label className="text-xs text-gray-500 mb-1">Порядок</label>
                     <MaterialSelect
                         options={orderOptions}

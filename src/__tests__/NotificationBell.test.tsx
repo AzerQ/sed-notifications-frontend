@@ -13,37 +13,42 @@ describe('NotificationBell', () => {
   it('должен отображаться корректно без непрочитанных уведомлений', () => {
     render(<NotificationBell unreadCount={0} onClick={mockOnClick} />);
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     expect(button).toBeInTheDocument();
     expect(button).toHaveAttribute('aria-label', 'Открыть центр уведомлений');
     
+    // Проверяем наличие иконки
+    const icon = screen.getByTestId('notification-bell-icon');
+    expect(icon).toBeInTheDocument();
+    
     // Счетчик не должен отображаться при 0 непрочитанных
-    expect(screen.queryByText('0')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('notification-bell-badge')).not.toBeInTheDocument();
   });
 
   it('должен отображать счетчик непрочитанных уведомлений', () => {
     render(<NotificationBell unreadCount={5} onClick={mockOnClick} />);
     
-    const badge = screen.getByText('5');
+    const badge = screen.getByTestId('notification-bell-badge');
     expect(badge).toBeInTheDocument();
+    expect(badge).toHaveTextContent('5');
     expect(badge).toHaveClass('bg-red-600', 'text-white');
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     expect(button).toHaveAttribute('aria-label', 'Открыть центр уведомлений (5 непрочитанных)');
   });
 
   it('должен отображать "99+" для большого количества уведомлений', () => {
     render(<NotificationBell unreadCount={150} onClick={mockOnClick} />);
     
-    const badge = screen.getByText('99+');
-    expect(badge).toBeInTheDocument();
+    const badge = screen.getByTestId('notification-bell-badge');
+    expect(badge).toHaveTextContent('99+');
   });
 
   it('должен вызывать onClick при клике', async () => {
     const user = userEvent.setup();
     render(<NotificationBell unreadCount={3} onClick={mockOnClick} />);
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     await user.click(button);
     
     expect(mockOnClick).toHaveBeenCalledTimes(1);
@@ -52,7 +57,7 @@ describe('NotificationBell', () => {
   it('должен иметь правильные CSS классы для стилизации', () => {
     render(<NotificationBell unreadCount={1} onClick={mockOnClick} />);
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     expect(button).toHaveClass(
       'relative',
       'p-2',
@@ -67,7 +72,7 @@ describe('NotificationBell', () => {
     const user = userEvent.setup();
     render(<NotificationBell unreadCount={1} onClick={mockOnClick} />);
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     await user.tab();
     
     expect(button).toHaveFocus();
@@ -78,7 +83,7 @@ describe('NotificationBell', () => {
     const user = userEvent.setup();
     render(<NotificationBell unreadCount={1} onClick={mockOnClick} />);
     
-    const button = screen.getByRole('button');
+    const button = screen.getByTestId('notification-bell');
     button.focus();
     
     await user.keyboard('{Enter}');

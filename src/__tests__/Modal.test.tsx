@@ -23,33 +23,38 @@ describe('Modal', () => {
   it('должен отображаться когда isOpen = true', () => {
     render(<Modal {...defaultProps} />);
     
+    expect(screen.getByTestId('modal-overlay')).toBeInTheDocument();
+    expect(screen.getByTestId('modal')).toBeInTheDocument();
     expect(screen.getByText('Modal Content')).toBeInTheDocument();
   });
 
   it('не должен отображаться когда isOpen = false', () => {
     render(<Modal {...defaultProps} isOpen={false} />);
     
+    expect(screen.queryByTestId('modal-overlay')).not.toBeInTheDocument();
     expect(screen.queryByText('Modal Content')).not.toBeInTheDocument();
   });
 
   it('должен отображать заголовок если он предоставлен', () => {
     render(<Modal {...defaultProps} title="Test Title" />);
     
+    expect(screen.getByTestId('modal-header')).toBeInTheDocument();
     expect(screen.getByText('Test Title')).toBeInTheDocument();
-    expect(screen.getByLabelText('Закрыть модальное окно')).toBeInTheDocument();
+    expect(screen.getByTestId('modal-close-button')).toBeInTheDocument();
   });
 
   it('не должен отображать заголовок если он не предоставлен', () => {
     render(<Modal {...defaultProps} />);
     
-    expect(screen.queryByLabelText('Закрыть модальное окно')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('modal-header')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('modal-close-button')).not.toBeInTheDocument();
   });
 
   it('должен закрываться при клике на кнопку X в заголовке', async () => {
     const user = userEvent.setup();
     render(<Modal {...defaultProps} title="Test Title" />);
     
-    const closeButton = screen.getByLabelText('Закрыть модальное окно');
+    const closeButton = screen.getByTestId('modal-close-button');
     await user.click(closeButton);
     
     expect(mockOnClose).toHaveBeenCalledTimes(1);
@@ -59,10 +64,9 @@ describe('Modal', () => {
     const user = userEvent.setup();
     render(<Modal {...defaultProps} />);
     
-    const backdrop = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
-    expect(backdrop).toBeInTheDocument();
+    const backdrop = screen.getByTestId('modal-backdrop');
+    await user.click(backdrop);
     
-    await user.click(backdrop as Element);
     expect(mockOnClose).toHaveBeenCalled();
   });
 
@@ -70,8 +74,8 @@ describe('Modal', () => {
     const user = userEvent.setup();
     render(<Modal {...defaultProps} />);
     
-    const modalContent = screen.getByText('Modal Content');
-    await user.click(modalContent);
+    const modal = screen.getByTestId('modal');
+    await user.click(modal);
     
     expect(mockOnClose).not.toHaveBeenCalled();
   });
