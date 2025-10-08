@@ -84,6 +84,8 @@ export const CompactNotification: React.FC<CompactNotificationProps> = ({
 
   return (
     <div
+      role="button"
+      tabIndex={0}
       onClick={handleClick}
       className={`
         p-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-150

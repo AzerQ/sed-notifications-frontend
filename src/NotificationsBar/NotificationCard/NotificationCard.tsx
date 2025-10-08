@@ -59,7 +59,7 @@ export const NotificationCard: React.FC<{
                             <div className="flex items-center space-x-2">
                                 {notification.delegate && (
                                     <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full">
-                    За заместителя
+                    По замещению
                   </span>
                                 )}
                                 <button
@@ -68,6 +68,7 @@ export const NotificationCard: React.FC<{
                                         onToggleStar(notification.id);
                                     }}
                                     className="text-gray-400 hover:text-yellow-500 transition-colors"
+                                    aria-label={notification.starred ? "Убрать из избранного" : "Добавить в избранное"}
                                 >
                                     {notification.starred ? (
                                         <BookmarkCheck className="w-4 h-4 text-yellow-500"/>

@@ -42,6 +42,11 @@ export const MaterialSelect: React.FC<{
     return (
         <div className={`relative ${className}`} ref={selectRef}>
             <div
+                role="button"
+                tabIndex={disabled ? -1 : 0}
+                aria-expanded={isOpen}
+                aria-haspopup="listbox"
+                aria-disabled={disabled}
                 className={`flex items-center justify-between px-3 py-2 border rounded-md cursor-pointer transition-colors ${
                     disabled
                         ? 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'

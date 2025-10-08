@@ -55,6 +55,9 @@ export const Modal: React.FC<ModalProps> = ({
       {/* Modal */}
       <div className="flex min-h-screen items-center justify-center p-4">
         <div 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={title ? "modal-title" : undefined}
           className={`
             relative w-full ${sizeClasses[size]} bg-white rounded-lg shadow-xl 
             transform transition-all duration-300 ease-out max-h-[90vh] flex flex-col
@@ -65,7 +68,7 @@ export const Modal: React.FC<ModalProps> = ({
           {/* Header */}
           {title && (
             <div className="flex items-center justify-between p-6 border-b border-gray-200">
-              <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
+              <h2 id="modal-title" className="text-xl font-semibold text-gray-900">{title}</h2>
               <button
                 onClick={onClose}
                 className="p-2 hover:bg-gray-100 rounded-full transition-colors"

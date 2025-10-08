@@ -79,7 +79,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         isOpen={isModalOpen} 
         onClose={closeModal}
         title="Центр уведомлений"
-        size="xl"
+        size="full"
       >
         <NotificationsBar 
           notifications={notifications} 
