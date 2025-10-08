@@ -36,7 +36,6 @@ const NotificationsBarContent: React.FC<{
     type: '',
     subtype: '',
     status: '',
-    starred: '',
     author: ''
   });
   const [sortOption, setSortOption] = useState<SortOption>({
@@ -128,11 +127,6 @@ const NotificationsBarContent: React.FC<{
         return false;
       }
       
-      // Apply starred filter
-      if (filters.starred === 'true' && !notification.starred) {
-        return false;
-      }
-      
       // Apply author filter
       if (filters.author && notification.author !== filters.author) {
         return false;
@@ -176,7 +170,50 @@ const NotificationsBarContent: React.FC<{
     });
   }, [notifications, filters, searchTerm, sortOption]);
 
+  // Separate starred and regular notifications
+  const starredNotifications = filteredNotifications.filter(notification => notification.starred);
+  const regularNotifications = filteredNotifications.filter(notification => !notification.starred);
+
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  // Component for rendering notifications list
+  const NotificationsList: React.FC<{
+    notifications: InAppNotificationData[];
+    title?: string;
+    emptyMessage?: string;
+  }> = ({ notifications, title, emptyMessage }) => (
+    <div className="mb-8">
+      {title && (
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
+          {title}
+          <span className="ml-2 bg-gray-100 text-gray-600 text-sm font-medium px-2.5 py-0.5 rounded-full">
+            {notifications.length}
+          </span>
+        </h2>
+      )}
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
+        {notifications.length === 0 ? (
+          emptyMessage && (
+            <div className="col-span-full text-center py-8">
+              <p className="text-gray-500">{emptyMessage}</p>
+            </div>
+          )
+        ) : (
+          notifications.map(notification => (
+            <div key={notification.id} className="h-full">
+              <NotificationCard
+                notification={notification}
+                onToggleRead={toggleRead}
+                onToggleStar={toggleStar}
+                onActionComplete={markNotificationAsRead}
+                showToast={showToast}
+              />
+            </div>
+          ))
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -247,28 +284,37 @@ const NotificationsBarContent: React.FC<{
           onSortChange={handleSortChange}
         />
 
-        {/* Notifications List */}
-        <div className="grid gap-4 grid-cols-1 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-4">
-          {filteredNotifications.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Уведомления не найдены</h3>
-              <p className="text-gray-500">Попробуйте изменить фильтры или выполнить поиск</p>
-            </div>
-          ) : (
-            filteredNotifications.map(notification => (
-              <div key={notification.id} className="h-full">
-                <NotificationCard
-                  notification={notification}
-                  onToggleRead={toggleRead}
-                  onToggleStar={toggleStar}
-                  onActionComplete={markNotificationAsRead}
-                  showToast={showToast}
+        {/* Notifications Lists */}
+        {starredNotifications.length === 0 && regularNotifications.length === 0 ? (
+          <div className="text-center py-12">
+            <Bell className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Уведомления не найдены</h3>
+            <p className="text-gray-500">Попробуйте изменить фильтры или выполнить поиск</p>
+          </div>
+        ) : (
+          <>
+            {/* Starred Notifications Section */}
+            {starredNotifications.length > 0 && (
+              <NotificationsList
+                notifications={starredNotifications}
+                title="⭐ Избранные уведомления"
+              />
+            )}
+
+            {/* Regular Notifications Section */}
+            {regularNotifications.length > 0 && (
+              <>
+                {starredNotifications.length > 0 && (
+                  <hr className="border-gray-200 my-8" />
+                )}
+                <NotificationsList
+                  notifications={regularNotifications}
+                  title="📋 Все уведомления"
                 />
-              </div>
-            ))
-          )}
-        </div>
+              </>
+            )}
+          </>
+        )}
       </main>
     </div>
   );

@@ -43,11 +43,6 @@ export const NotificationFilters: React.FC<{
         {value: 'read', label: 'Прочитанные'}
     ];
 
-    const starredOptions = [
-        {value: '', label: 'Все'},
-        {value: 'true', label: 'Избранные'}
-    ];
-
 
     const subtypeOptions = [
         {value: '', label: 'Все подвиды'},
@@ -95,16 +90,6 @@ export const NotificationFilters: React.FC<{
                             value={filters.status}
                             onChange={(value) => onFilterChange('status', value)}
                             className="min-w-[150px]"
-                        />
-                    </div>
-
-                    <div className="flex flex-col">
-                        <label className="text-xs text-gray-500 mb-1">Избранные</label>
-                        <MaterialSelect
-                            options={starredOptions}
-                            value={filters.starred}
-                            onChange={(value) => onFilterChange('starred', value)}
-                            className="min-w-[120px]"
                         />
                     </div>
 

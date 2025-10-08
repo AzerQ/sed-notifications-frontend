@@ -18,7 +18,6 @@ export interface Filters {
     type: string;
     subtype: string;
     status: string;
-    starred: string;
     author: string;
 }
 
