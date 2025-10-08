@@ -7,7 +7,10 @@ import {ToastProvider} from "./Toast/ToastProvider";
 import {InAppNotificationData} from './types';
 import {NotificationCard} from "./NotificationCard/NotificationCard";
 
-export const NotificationsBar: React.FC<{notifications: InAppNotificationData[]}> = ({notifications}) => {
+export const NotificationsBar: React.FC<{
+  notifications: InAppNotificationData[];
+  onNotificationsChange?: (notifications: InAppNotificationData[]) => void;
+}> = ({notifications, onNotificationsChange}) => {
   return (
     <ToastProvider>
       {({ showToast, testToasts, togglePosition, position }) => (
@@ -17,6 +20,7 @@ export const NotificationsBar: React.FC<{notifications: InAppNotificationData[]}
           togglePosition={togglePosition}
           position={position}
           appNotifications={notifications}
+          onNotificationsChange={onNotificationsChange}
         />
       )}
     </ToastProvider>
@@ -29,7 +33,8 @@ const NotificationsBarContent: React.FC<{
   togglePosition: () => void;
   position: 'top' | 'bottom';
   appNotifications: InAppNotificationData[];
-}> = ({ showToast, testToasts, togglePosition, position, appNotifications }) => {
+  onNotificationsChange?: (notifications: InAppNotificationData[]) => void;
+}> = ({ showToast, testToasts, togglePosition, position, appNotifications, onNotificationsChange }) => {
   const [notifications, setnotifications] = useState<InAppNotificationData[]>(appNotifications);
   const [filters, setFilters] = useState<Filters>({
     type: '',
@@ -45,23 +50,31 @@ const NotificationsBarContent: React.FC<{
   const [searchTerm, setSearchTerm] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const updateNotifications = (updatedNotifications: InAppNotificationData[]) => {
+    setnotifications(updatedNotifications);
+    onNotificationsChange?.(updatedNotifications);
+  };
+
   const toggleRead = (id: number) => {
-    setnotifications(notifications.map(notif =>
+    const updatedNotifications = notifications.map(notif =>
       notif.id === id ? { ...notif, read: !notif.read } : notif
-    ));
+    );
+    updateNotifications(updatedNotifications);
   };
 
   const toggleStar = (id: number) => {
-    setnotifications(notifications.map(notif =>
+    const updatedNotifications = notifications.map(notif =>
       notif.id === id ? { ...notif, starred: !notif.starred } : notif
-    ));
+    );
+    updateNotifications(updatedNotifications);
   };
 
   // New function to mark notification as read after action
   const markNotificationAsRead = (id: number) => {
-    setnotifications(notifications.map(notif =>
+    const updatedNotifications = notifications.map(notif =>
       notif.id === id ? { ...notif, read: true } : notif
-    ));
+    );
+    updateNotifications(updatedNotifications);
   };
 
   const handleFilterChange = (key: keyof Filters, value: string) => {
