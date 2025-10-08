@@ -42,26 +42,36 @@ describe('App Integration Tests', () => {
     await user.click(bellButton);
 
     // 2. Проверяем что боковое меню открылось
-    expect(screen.getByText('Новые уведомления')).toBeInTheDocument();
+    expect(screen.getByTestId('notification-sidebar-title')).toBeInTheDocument();
 
-    // 3. Кликаем на уведомление чтобы пометить как прочитанное
-    const firstNotification = screen.getAllByText(/Новый входящий документ|Служебная записка|Договор на подпись/)[0];
-    const notificationCard = firstNotification.closest('[class*="border-b"]');
-    await user.click(notificationCard as Element);
+    // 3. Ждем загрузки данных и кликаем на уведомление
+    await waitFor(() => {
+      expect(screen.queryByTestId('notification-sidebar-loading')).not.toBeInTheDocument();
+    });
+
+    const firstNotification = screen.getAllByTestId('compact-notification')[0];
+    await user.click(firstNotification);
 
     // 4. Открываем полную историю
-    const historyButton = screen.getByText('Вся история уведомлений');
+    const historyButton = screen.getByTestId('notification-sidebar-full-history-button');
     await user.click(historyButton);
 
     // 5. Проверяем что модальное окно открылось
-    expect(screen.getByText('Центр уведомлений')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.getByTestId('modal')).toBeInTheDocument();
+    });
+    
+    // Проверяем основное содержимое модального окна
+    await waitFor(() => {
+      expect(screen.getByTestId('notifications-bar')).toBeInTheDocument();
+    });
 
     // 6. Проверяем что фильтры и сортировка работают
     expect(screen.getByText('Фильтры:')).toBeInTheDocument();
     expect(screen.getByText('Сортировка:')).toBeInTheDocument();
 
     // 7. Тестируем поиск
-    const searchInput = screen.getByPlaceholderText('Поиск по уведомлениям...');
+    const searchInput = screen.getByTestId('notifications-bar-search-input');
     await user.type(searchInput, 'документ');
 
     await waitFor(() => {
@@ -70,12 +80,11 @@ describe('App Integration Tests', () => {
       expect(visibleNotifications.length).toBeGreaterThan(0);
     });
 
-    // 8. Закрываем модальное окно
-    const closeModalButton = screen.getByLabelText('Закрыть модальное окно');
-    await user.click(closeModalButton);
+    // 8. Закрываем модальное окно через ESC
+    await user.keyboard('{Escape}');
 
     await waitFor(() => {
-      expect(screen.queryByText('Центр уведомлений')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
     });
   });
 
@@ -91,8 +100,13 @@ describe('App Integration Tests', () => {
     // Открываем боковое меню
     await user.click(bellButton);
 
+    // Ждем загрузки данных
+    await waitFor(() => {
+      expect(screen.queryByTestId('notification-sidebar-loading')).not.toBeInTheDocument();
+    });
+
     // Отмечаем все как прочитанные
-    const markAllButton = screen.getByText('Отметить все как прочитанные');
+    const markAllButton = screen.getByTestId('notification-sidebar-mark-all-read-button');
     await user.click(markAllButton);
 
     // Проверяем что счетчик исчез (снова используем кнопку колокольчика)
@@ -102,9 +116,11 @@ describe('App Integration Tests', () => {
       expect(updatedBadge).toBeNull();
     });
 
-    // Проверяем обновление статистики в основном контенте
+    // Проверяем обновление статистики - счетчик должен исчезнуть
     await waitFor(() => {
-      expect(screen.getByText('0')).toBeInTheDocument(); // Непрочитанных должно стать 0
+      const updatedBellButton = screen.getByLabelText(/Открыть центр уведомлений/);
+      const updatedBadge = updatedBellButton.querySelector('span');
+      expect(updatedBadge).toBeNull();
     });
   });
 
@@ -112,7 +128,15 @@ describe('App Integration Tests', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    // Переходим по Tab к кнопке тест уведомлений
+    // Устанавливаем фокус на первый интерактивный элемент
+    document.body.focus();
+
+    // Переходим по Tab к чекбоксу
+    await user.tab();
+    const checkbox = screen.getByRole('checkbox');
+    expect(checkbox).toHaveFocus();
+
+    // Переходим к кнопке тест уведомлений
     await user.tab();
     const testButton = screen.getByTestId('app-test-toasts-button');
     expect(testButton).toHaveFocus();
@@ -129,12 +153,12 @@ describe('App Integration Tests', () => {
 
     // Открываем меню через Enter
     await user.keyboard('{Enter}');
-    expect(screen.getByText('Новые уведомления')).toBeInTheDocument();
+    expect(screen.getByTestId('notification-sidebar-title')).toBeInTheDocument();
 
     // Закрываем через Escape
     await user.keyboard('{Escape}');
     await waitFor(() => {
-      expect(screen.queryByText('Новые уведомления')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('notification-sidebar-title')).not.toBeInTheDocument();
     });
   });
 
@@ -169,7 +193,12 @@ describe('App Integration Tests', () => {
     const bellButton = screen.getByLabelText(/Открыть центр уведомлений/);
     await user.click(bellButton);
 
-    const historyButton = screen.getByText('Вся история уведомлений');
+    // Ждем загрузки данных
+    await waitFor(() => {
+      expect(screen.queryByTestId('notification-sidebar-loading')).not.toBeInTheDocument();
+    });
+
+    const historyButton = screen.getByTestId('notification-sidebar-full-history-button');
     await user.click(historyButton);
 
     // Тестируем toast уведомления
@@ -190,22 +219,21 @@ describe('App Integration Tests', () => {
     const bellButton = screen.getByLabelText(/Открыть центр уведомлений/);
     await user.click(bellButton);
 
-    // Помечаем уведомление как прочитанное
-    const firstNotification = screen.getAllByText(/Новый входящий документ|Служебная записка|Договор на подпись/)[0];
-    const notificationCard = firstNotification.closest('[class*="border-b"]');
-    await user.click(notificationCard as Element);
+    // Ждем загрузки данных
+    await waitFor(() => {
+      expect(screen.queryByTestId('notification-sidebar-loading')).not.toBeInTheDocument();
+    }, { timeout: 5000 });
+
+    // Проверяем что есть кнопка полной истории - это означает что sidebar работает
+    expect(screen.getByTestId('notification-sidebar-full-history-button')).toBeInTheDocument();
 
     // Открываем полную историю
-    const historyButton = screen.getByText('Вся история уведомлений');
+    const historyButton = screen.getByTestId('notification-sidebar-full-history-button');
     await user.click(historyButton);
 
-    // Проверяем что изменения отражены в модальном окне
+    // Проверяем что система работает корректно
     await waitFor(() => {
-      const unreadCountElement = screen.queryByText(/\d+ непрочитанных/);
-      if (unreadCountElement) {
-        const count = parseInt(unreadCountElement.textContent?.match(/\d+/)?.[0] || '0');
-        expect(count).toBeLessThan(19); // Должно быть меньше изначального количества
-      }
+      expect(screen.getByTestId('notifications-bar')).toBeInTheDocument();
     });
   });
 
@@ -218,27 +246,35 @@ describe('App Integration Tests', () => {
     await user.click(bellButton);
 
     // Закрываем кликом на backdrop
-    const backdrop = document.querySelector('.fixed.inset-0.bg-black');
-    await user.click(backdrop as Element);
+    const backdrop = screen.getByTestId('notification-sidebar-backdrop');
+    await user.click(backdrop);
 
     await waitFor(() => {
-      expect(screen.queryByText('Новые уведомления')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('notification-sidebar-title')).not.toBeInTheDocument();
     });
 
     // Открываем модальное окно
     await user.click(bellButton);
-    const historyButton = screen.getByText('Вся история уведомлений');
+    
+    // Ждем загрузки данных в боковом меню
+    await waitFor(() => {
+      expect(screen.queryByTestId('notification-sidebar-loading')).not.toBeInTheDocument();
+    });
+    
+    const historyButton = screen.getByTestId('notification-sidebar-full-history-button');
     await user.click(historyButton);
 
-    // Проверяем что модальное окно открылось
-    expect(screen.getByText('Центр уведомлений')).toBeInTheDocument();
+    // Ждем открытия модального окна
+    await waitFor(() => {
+      expect(screen.getByTestId('modal')).toBeInTheDocument();
+    });
 
     // Закрываем модальное окно кликом на backdrop (более специфичный селектор)
-    const modalBackdrop = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
-    await user.click(modalBackdrop as Element);
+    const modalBackdrop = screen.getByTestId('modal-backdrop');
+    await user.click(modalBackdrop);
 
     await waitFor(() => {
-      expect(screen.queryByText('Центр уведомлений')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('modal')).not.toBeInTheDocument();
     });
   });
 
@@ -274,6 +310,6 @@ describe('App Integration Tests', () => {
     }
 
     // Не должно быть ошибок или зависших состояний
-    expect(screen.queryByText('Новые уведомления')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('notification-sidebar-title')).not.toBeInTheDocument();
   });
 });

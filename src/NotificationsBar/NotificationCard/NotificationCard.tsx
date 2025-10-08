@@ -4,7 +4,7 @@ import {InAppNotificationData, ToastConfig} from "../types";
 import {Bookmark, BookmarkCheck, Calendar, Eye, EyeOff, User} from "lucide-react";
 import {NotificationActionsDropdown} from "./NotificationActionsDropdown";
 import {ActionButton} from "./ActionButton";
-import {formatDate, getTypeColorClass, getTypeIcon} from "../Common";
+import {formatNotificationDate, getNotificationTypeColorClass, getNotificationIcon} from "../../utils/notificationUtils";
 
 export const NotificationCard: React.FC<{
     notification: InAppNotificationData;
@@ -54,10 +54,10 @@ export const NotificationCard: React.FC<{
             <div className="flex items-start justify-between">
                 <div className="flex items-start space-x-3 flex-1">
                     <div
-                        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border ${getTypeColorClass(notification.type)}`}
+                        className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center border ${getNotificationTypeColorClass(notification.type)}`}
                         data-testid="notification-card-icon"
                     >
-                        {getTypeIcon(notification.type)}
+                        {getNotificationIcon(notification.type, notification.subtype, 'md')}
                     </div>
                     <div className="flex-1 min-w-0" data-testid="notification-card-content">
                         <div className="flex items-center justify-between mb-2" data-testid="notification-card-header">
@@ -98,7 +98,7 @@ export const NotificationCard: React.FC<{
 
                         <div className="flex items-center space-x-2 mb-2" data-testid="notification-card-type">
               <span
-                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getTypeColorClass(notification.type)}`}
+                  className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${getNotificationTypeColorClass(notification.type)}`}
                   data-testid="notification-card-subtype-badge"
               >
                 {notification.subtype}
@@ -117,7 +117,7 @@ export const NotificationCard: React.FC<{
                                 </div>
                                 <div className="flex items-center space-x-1" data-testid="notification-card-date">
                                     <Calendar className="w-3 h-3"/>
-                                    <span>{formatDate(notification.date)}</span>
+                                    <span>{formatNotificationDate(notification.date)}</span>
                                 </div>
                             </div>
 

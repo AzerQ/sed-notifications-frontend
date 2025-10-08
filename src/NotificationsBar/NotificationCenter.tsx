@@ -81,9 +81,9 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         title="Центр уведомлений"
         size="full"
       >
-        <NotificationsBar 
-          notifications={notifications} 
-          onNotificationsChange={updateNotifications}
+        <NotificationsBar
+          notifications={notifications}
+          onNotificationUpdate={updateNotifications}
         />
       </Modal>
     </div>

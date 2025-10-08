@@ -1,7 +1,10 @@
 export { NotificationCenter } from './NotificationCenter';
+export { NotificationCenterWithStore } from './NotificationCenterWithStore';
 export { NotificationBell } from './NotificationBell';
 export { NotificationSidebar } from './NotificationSidebar';
 export { NotificationsBar } from './NotificationsBar';
 export { Modal } from './Modal';
 export { CompactNotification } from './NotificationCard/CompactNotification';
+export { SignalRCompactNotification } from './NotificationCard/SignalRCompactNotification';
+export { Pagination } from './Pagination';
 export * from './types';

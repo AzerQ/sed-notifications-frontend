@@ -7,7 +7,7 @@ import { mockNotifications } from './utils/testUtils';
 describe('NotificationsBar', () => {
   const defaultProps = {
     notifications: mockNotifications,
-    onNotificationsChange: jest.fn(),
+    onNotificationUpdate: jest.fn(),
   };
 
   beforeEach(() => {
@@ -106,7 +106,7 @@ describe('NotificationsBar', () => {
     const starButtons = screen.getAllByRole('button', { name: /избранного/i });
     await user.click(starButtons[0]);
 
-    expect(defaultProps.onNotificationsChange).toHaveBeenCalled();
+    expect(defaultProps.onNotificationUpdate).toHaveBeenCalled();
   });
 
   it('должен переключать статус прочтения', async () => {
@@ -116,7 +116,7 @@ describe('NotificationsBar', () => {
     const eyeButton = screen.getAllByTitle('Отметить как прочитанное')[0];
     await user.click(eyeButton);
 
-    expect(defaultProps.onNotificationsChange).toHaveBeenCalled();
+    expect(defaultProps.onNotificationUpdate).toHaveBeenCalled();
   });
 
   it('должен отображать сообщение когда нет результатов поиска', async () => {

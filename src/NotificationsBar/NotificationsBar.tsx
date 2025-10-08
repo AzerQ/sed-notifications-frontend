@@ -6,18 +6,49 @@ import {Filters, Preset, ToastConfig, SortOption} from "./types";
 import {ToastProvider} from "./Toast/ToastProvider";
 import {InAppNotificationData} from './types';
 import {NotificationCard} from "./NotificationCard/NotificationCard";
+import {Pagination} from "./Pagination";
 
 export const NotificationsBar: React.FC<{
   notifications: InAppNotificationData[];
-  onNotificationsChange?: (notifications: InAppNotificationData[]) => void;
-}> = ({notifications, onNotificationsChange}) => {
+  onNotificationUpdate?: (notifications: InAppNotificationData[]) => void;
+  showFilters?: boolean;
+  showSearch?: boolean;
+  showPagination?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  isLoading?: boolean;
+}> = ({
+  notifications, 
+  onNotificationUpdate,
+  showFilters = true,
+  showSearch = true,
+  showPagination = false,
+  currentPage = 1,
+  totalPages = 1,
+  pageSize = 20,
+  onPageChange,
+  onPageSizeChange,
+  isLoading = false
+}) => {
   return (
     <ToastProvider>
       {({ showToast }) => (
         <NotificationsBarContent
           showToast={showToast}
           appNotifications={notifications}
-          onNotificationsChange={onNotificationsChange}
+          onNotificationUpdate={onNotificationUpdate}
+          showFilters={showFilters}
+          showSearch={showSearch}
+          showPagination={showPagination}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          isLoading={isLoading}
         />
       )}
     </ToastProvider>
@@ -27,8 +58,30 @@ export const NotificationsBar: React.FC<{
 const NotificationsBarContent: React.FC<{
   showToast: (toast: ToastConfig) => void;
   appNotifications: InAppNotificationData[];
-  onNotificationsChange?: (notifications: InAppNotificationData[]) => void;
-}> = ({ showToast, appNotifications, onNotificationsChange }) => {
+  onNotificationUpdate?: (notifications: InAppNotificationData[]) => void;
+  showFilters?: boolean;
+  showSearch?: boolean;
+  showPagination?: boolean;
+  currentPage?: number;
+  totalPages?: number;
+  pageSize?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
+  isLoading?: boolean;
+}> = ({ 
+  showToast, 
+  appNotifications, 
+  onNotificationUpdate,
+  showFilters = true,
+  showSearch = true,
+  showPagination = false,
+  currentPage = 1,
+  totalPages = 1,
+  pageSize = 20,
+  onPageChange,
+  onPageSizeChange,
+  isLoading = false
+}) => {
   const [notifications, setnotifications] = useState<InAppNotificationData[]>(appNotifications);
   const [filters, setFilters] = useState<Filters>({
     type: '',
@@ -46,7 +99,7 @@ const NotificationsBarContent: React.FC<{
 
   const updateNotifications = (updatedNotifications: InAppNotificationData[]) => {
     setnotifications(updatedNotifications);
-    onNotificationsChange?.(updatedNotifications);
+    onNotificationUpdate?.(updatedNotifications);
   };
 
   const toggleRead = (id: number) => {
@@ -252,25 +305,27 @@ const NotificationsBarContent: React.FC<{
       </div>
 
       {/* Filters Section */}
-      <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
-        <NotificationFilters
-          notifications={notifications}
-          filters={filters}
-          onFilterChange={handleFilterChange}
-          onSavePreset={openModal}
-          presets={presets}
-          onApplyPreset={applyPreset}
-          isModalOpen={isModalOpen}
-          onModalOpen={openModal}
-          onModalClose={closeModal}
-          onModalSave={savePreset}
-        />
+      {showFilters && (
+        <div className="p-6 border-b border-gray-200 bg-white flex-shrink-0">
+          <NotificationFilters
+            notifications={notifications}
+            filters={filters}
+            onFilterChange={handleFilterChange}
+            onSavePreset={openModal}
+            presets={presets}
+            onApplyPreset={applyPreset}
+            isModalOpen={isModalOpen}
+            onModalOpen={openModal}
+            onModalClose={closeModal}
+            onModalSave={savePreset}
+          />
 
-        <NotificationSort
-          sortOption={sortOption}
-          onSortChange={handleSortChange}
-        />
-      </div>
+          <NotificationSort
+            sortOption={sortOption}
+            onSortChange={handleSortChange}
+          />
+        </div>
+      )}
 
       {/* Notifications Content */}
       <div className="flex-1 overflow-y-auto p-6" data-testid="notifications-bar-content">
@@ -307,6 +362,18 @@ const NotificationsBarContent: React.FC<{
           </>
         )}
       </div>
+
+      {/* Pagination */}
+      {showPagination && onPageChange && onPageSizeChange && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageSize={pageSize}
+          onPageChange={onPageChange}
+          onPageSizeChange={onPageSizeChange}
+          isLoading={isLoading}
+        />
+      )}
     </div>
   );
 };

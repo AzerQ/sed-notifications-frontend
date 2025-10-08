@@ -9,7 +9,8 @@ interface NotificationSidebarProps {
   notifications: InAppNotificationData[];
   onNotificationRead: (id: number) => void;
   onOpenFullHistory: () => void;
-  markAllAsRead: () => void; // Добавляем пропс для отметки всех как прочитанных
+  markAllAsRead: () => void;
+  isLoading?: boolean; // Добавляем опциональный пропс для индикации загрузки
 }
 
 export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
@@ -18,7 +19,8 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   notifications,
   onNotificationRead,
   onOpenFullHistory,
-  markAllAsRead
+  markAllAsRead,
+  isLoading = false
 }) => {
   const unreadNotifications = notifications.filter(n => !n.read);
 
@@ -65,7 +67,7 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0" data-testid="notification-sidebar-header">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-gray-700" />
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 className="text-lg font-semibold text-gray-900" data-testid="notification-sidebar-title">
               Новые уведомления
             </h2>
             {unreadNotifications.length > 0 && (
@@ -98,7 +100,12 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
         {/* Notifications List */}
         <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin" data-testid="notification-sidebar-content">
-          {unreadNotifications.length === 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8" data-testid="notification-sidebar-loading">
+              <div className="w-8 h-8 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
+              <p className="text-gray-500 text-sm">Загрузка уведомлений...</p>
+            </div>
+          ) : unreadNotifications.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8" data-testid="notification-sidebar-empty-state">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <Bell className="w-8 h-8 text-gray-400" />
