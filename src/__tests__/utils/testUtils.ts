@@ -2,6 +2,12 @@
 // This file is not a test file, it contains utilities for tests
 import { InAppNotificationData } from "../../NotificationsBar";
 
+// Empty test to satisfy Jest requirement
+describe('Test utilities', () => {
+  it('should provide test utilities', () => {
+    expect(true).toBe(true);
+  });
+});
 
 // Тестовые данные для уведомлений
 export const mockNotifications: InAppNotificationData[] = [

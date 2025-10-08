@@ -21,10 +21,6 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   markAllAsRead
 }) => {
   const unreadNotifications = notifications.filter(n => !n.read);
-  
-  // Отладочная информация (можно удалить в продакшене)
-  console.log('Total notifications:', notifications.length);
-  console.log('Unread notifications:', unreadNotifications.length);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {

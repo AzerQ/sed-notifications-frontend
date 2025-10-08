@@ -33,7 +33,8 @@ describe('NotificationsBar', () => {
 
     expect(screen.getByText('Тест документ')).toBeInTheDocument();
     expect(screen.getByText('Тест задание')).toBeInTheDocument();
-    expect(screen.getByText('Системное уведомление')).toBeInTheDocument();
+    // Используем getAllByText для множественных элементов
+    expect(screen.getAllByText('Системное уведомление')).toHaveLength(2);
   });
 
   it('должен разделять избранные и обычные уведомления', () => {
@@ -82,6 +83,7 @@ describe('NotificationsBar', () => {
 
   it('должен сортировать уведомления', async () => {
     const user = userEvent.setup();
+    const mockOnSortChange = jest.fn();
     render(<NotificationsBar {...defaultProps} />);
 
     const fieldSelect = screen.getByText('Дата').closest('div');
@@ -92,8 +94,8 @@ describe('NotificationsBar', () => {
 
     // Уведомления должны быть пересортированы по заголовку
     await waitFor(() => {
-      // Проверяем что селект изменился на 'Заголовок'
-      expect(screen.getByDisplayValue?.('Заголовок') || screen.getByText('Заголовок')).toBeInTheDocument();
+      // Проверяем что отображается выбранная опция
+      expect(screen.getByText('Заголовок')).toBeInTheDocument();
     });
   });
 

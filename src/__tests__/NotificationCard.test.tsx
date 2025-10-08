@@ -88,12 +88,15 @@ describe('NotificationCard', () => {
 
   it('должен переключать статус избранного при клике на звездочку', async () => {
     const user = userEvent.setup();
+    const notification = createMockNotification({
+      id: 123,
+      starred: false,
+      read: false,
+    });
+    
     render(
       <NotificationCard
-        notification={createMockNotification({
-          starred: false,
-          read: false,
-        })}
+        notification={notification}
         {...mockProps}
       />
     );

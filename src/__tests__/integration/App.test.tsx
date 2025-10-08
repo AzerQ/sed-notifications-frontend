@@ -83,21 +83,22 @@ describe('App Integration Tests', () => {
     const user = userEvent.setup();
     render(<App />);
 
-    // Получаем начальный счетчик
-    const initialBadge = screen.getByRole('button').querySelector('span');
+    // Получаем начальный счетчик (ищем кнопку колокольчика)
+    const bellButton = screen.getByLabelText(/Открыть центр уведомлений/);
+    const initialBadge = bellButton.querySelector('span');
     const initialCount = initialBadge?.textContent;
 
     // Открываем боковое меню
-    const bellButton = screen.getByLabelText(/Открыть центр уведомлений/);
     await user.click(bellButton);
 
     // Отмечаем все как прочитанные
     const markAllButton = screen.getByText('Отметить все как прочитанные');
     await user.click(markAllButton);
 
-    // Проверяем что счетчик исчез
+    // Проверяем что счетчик исчез (снова используем кнопку колокольчика)
     await waitFor(() => {
-      const updatedBadge = screen.getByRole('button').querySelector('span');
+      const updatedBellButton = screen.getByLabelText(/Открыть центр уведомлений/);
+      const updatedBadge = updatedBellButton.querySelector('span');
       expect(updatedBadge).toBeNull();
     });
 
@@ -197,8 +198,11 @@ describe('App Integration Tests', () => {
     const historyButton = screen.getByText('Вся история уведомлений');
     await user.click(historyButton);
 
-    // Закрываем модальное окно кликом на backdrop
-    const modalBackdrop = screen.getByRole('dialog').parentElement;
+    // Проверяем что модальное окно открылось
+    expect(screen.getByText('Центр уведомлений')).toBeInTheDocument();
+
+    // Закрываем модальное окно кликом на backdrop (более специфичный селектор)
+    const modalBackdrop = document.querySelector('.fixed.inset-0.bg-black.bg-opacity-50');
     await user.click(modalBackdrop as Element);
 
     await waitFor(() => {

@@ -75,6 +75,7 @@ export const ToastNotification: React.FC<{
                     <p className="text-sm mt-1">{message}</p>
                 </div>
                 <button
+                    type="button"
                     onClick={(e) => {
                         e.stopPropagation();
                         setIsVisible(false);

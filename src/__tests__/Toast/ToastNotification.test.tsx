@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ToastNotification } from '../../NotificationsBar/Toast/ToastNotification';
 
@@ -84,7 +84,9 @@ describe('ToastNotification', () => {
     render(<ToastNotification {...defaultProps} duration={3000} />);
 
     // Прокручиваем время на 3 секунды
-    jest.advanceTimersByTime(3000);
+    act(() => {
+      jest.advanceTimersByTime(3000);
+    });
 
     await waitFor(() => {
       expect(defaultProps.onClose).toHaveBeenCalledWith(1);
@@ -95,11 +97,15 @@ describe('ToastNotification', () => {
     render(<ToastNotification {...defaultProps} />);
 
     // Не должен закрыться через 3 секунды
-    jest.advanceTimersByTime(3000);
+    act(() => {
+      jest.advanceTimersByTime(3000);
+    });
     expect(defaultProps.onClose).not.toHaveBeenCalled();
 
     // Должен закрыться через 5 секунд
-    jest.advanceTimersByTime(2000);
+    act(() => {
+      jest.advanceTimersByTime(2000);
+    });
     await waitFor(() => {
       expect(defaultProps.onClose).toHaveBeenCalledWith(1);
     });
@@ -205,6 +211,11 @@ describe('ToastNotification', () => {
 
     const closeButton = screen.getByText('✕');
     await user.click(closeButton);
+
+    // Ждем выполнения setTimeout
+    act(() => {
+      jest.advanceTimersByTime(300);
+    });
 
     // Не должен открыть ссылку при клике на кнопку закрытия
     expect(mockWindowOpen).not.toHaveBeenCalled();
