@@ -9,6 +9,7 @@ interface NotificationSidebarProps {
   notifications: InAppNotificationData[];
   onNotificationRead: (id: number) => void;
   onOpenFullHistory: () => void;
+  markAllAsRead: () => void; // Добавляем пропс для отметки всех как прочитанных
 }
 
 export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
@@ -16,9 +17,14 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   onClose,
   notifications,
   onNotificationRead,
-  onOpenFullHistory
+  onOpenFullHistory,
+  markAllAsRead
 }) => {
   const unreadNotifications = notifications.filter(n => !n.read);
+  
+  // Отладочная информация (можно удалить в продакшене)
+  console.log('Total notifications:', notifications.length);
+  console.log('Unread notifications:', unreadNotifications.length);
 
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
@@ -55,11 +61,11 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
       
       {/* Sidebar */}
       <div className={`
-        fixed top-0 right-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out
+        fixed top-0 right-0 h-full w-80 bg-white shadow-xl transform transition-transform duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : 'translate-x-full'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <Bell className="w-5 h-5 text-gray-700" />
             <h2 className="text-lg font-semibold text-gray-900">
@@ -81,7 +87,7 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
 
         {/* Full History Button */}
-        <div className="p-4 border-b border-gray-200">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0">
           <button
             onClick={handleFullHistoryClick}
             className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -92,9 +98,9 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
 
         {/* Notifications List */}
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto min-h-0 scrollbar-thin">
           {unreadNotifications.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-center px-4">
+            <div className="flex flex-col items-center justify-center h-full text-center px-4 py-8">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
                 <Bell className="w-8 h-8 text-gray-400" />
               </div>
@@ -120,10 +126,10 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
 
         {/* Footer */}
         {unreadNotifications.length > 0 && (
-          <div className="p-4 border-t border-gray-200 bg-gray-50">
+          <div className="p-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
             <button
               onClick={() => {
-                unreadNotifications.forEach(n => onNotificationRead(n.id));
+                markAllAsRead();
               }}
               className="w-full text-sm text-gray-600 hover:text-gray-800 transition-colors"
             >

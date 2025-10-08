@@ -32,6 +32,12 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
     updateNotifications(updatedNotifications);
   };
 
+  const markAllAsRead = () => {
+    const updatedNotifications = notifications.map(notification => (
+        { ...notification, read: true }));
+    updateNotifications(updatedNotifications);
+  }
+
   const openSidebar = () => {
     setIsSidebarOpen(true);
   };
@@ -61,6 +67,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
       />
       
       <NotificationSidebar
+        markAllAsRead={markAllAsRead}
         isOpen={isSidebarOpen}
         onClose={closeSidebar}
         notifications={notifications}
