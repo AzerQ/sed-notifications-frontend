@@ -35,7 +35,7 @@ const NotificationsBarContent: React.FC<{
   const [filters, setFilters] = useState<Filters>({
     type: '',
     subtype: '',
-    status: 'unread',
+    status: '',
     starred: '',
     author: ''
   });
