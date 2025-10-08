@@ -59,12 +59,20 @@ export class NotificationStore {
   
   isSignalRConnected = false;
 
+  // Колбек для показа всплывающих уведомлений
+  private showCompactToastCallback?: (notification: CompactNotificationData) => void;
+
   constructor(
     private notificationService: INotificationService,
     private signalRService: ISignalRNotificationService
   ) {
     makeAutoObservable(this);
     this.initializeSignalR();
+  }
+
+  // Метод для установки колбека показа всплывающих уведомлений
+  setShowCompactToastCallback(callback: (notification: CompactNotificationData) => void): void {
+    this.showCompactToastCallback = callback;
   }
 
   // Геттеры
@@ -261,6 +269,11 @@ export class NotificationStore {
 
   // Обработчики SignalR событий
   private handleNewNotification(compactNotification: CompactNotificationData): void {
+    // Показываем всплывающее уведомление
+    if (this.showCompactToastCallback) {
+      this.showCompactToastCallback(compactNotification);
+    }
+
     // Конвертируем компактное уведомление в полное
     const fullNotification: InAppNotificationData = {
       id: compactNotification.id,
