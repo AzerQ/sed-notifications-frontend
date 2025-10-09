@@ -166,9 +166,9 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       {/* Modal */}
       <div className="fixed inset-0 overflow-y-auto">
         <div className="flex min-h-full items-center justify-center p-4">
-          <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+          <div className="relative bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50">
+            <div className="flex items-center justify-between p-6 border-b border-gray-200 bg-gray-50 flex-shrink-0">
               <div className="flex items-center space-x-3">
                 <Settings className="w-6 h-6 text-gray-700" />
                 <h2 className="text-xl font-semibold text-gray-900">
@@ -186,7 +186,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
             </div>
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className="flex-1 overflow-y-auto p-6 min-h-0">
               {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-12">
                   <Loader2 className="w-8 h-8 animate-spin text-blue-600 mb-4" />
@@ -256,7 +256,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
             {/* Footer */}
             {settings && !isLoading && !error && (
-              <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50">
+              <div className="flex items-center justify-between p-6 border-t border-gray-200 bg-gray-50 flex-shrink-0">
                 <div className="text-sm text-gray-500">
                   Последнее обновление: {new Date(settings.lastUpdated).toLocaleString('ru-RU')}
                 </div>
@@ -271,6 +271,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                     onClick={handleSave}
                     disabled={isSaving}
                     className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    data-testid="notification-settings-save-button"
                   >
                     {isSaving ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
