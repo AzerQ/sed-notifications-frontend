@@ -103,7 +103,7 @@ export const NotificationCenterWithStore: React.FC<NotificationCenterProps> = ob
       />
 
       {/* Модальное окно с полной историей */}
-      <Modal isOpen={isModalOpen} onClose={handleModalClose}>
+      <Modal size='full' isOpen={isModalOpen} onClose={handleModalClose}>
         <NotificationsBar
           notifications={store.notifications}
           onNotificationUpdate={handleNotificationUpdate}
