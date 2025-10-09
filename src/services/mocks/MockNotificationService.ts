@@ -3,11 +3,12 @@ import {
   PaginatedResponse, 
   GetNotificationsParams 
 } from '../contracts/INotificationService';
-import { InAppNotificationData } from '../../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings, NotificationEventSetting } from '../../NotificationsBar/types';
 import { mockNotifications } from '../../MockNotifications';
 
 export class MockNotificationService implements INotificationService {
   private notifications: InAppNotificationData[] = [...mockNotifications];
+  private userSettings: UserNotificationSettings = this.getDefaultUserSettings();
 
   async getUnreadNotifications(params: GetNotificationsParams): Promise<PaginatedResponse<InAppNotificationData>> {
     // Симуляция задержки сети
@@ -126,6 +127,20 @@ export class MockNotificationService implements INotificationService {
     return this.notifications.filter(n => !n.read).length;
   }
 
+  async getUserNotificationSettings(): Promise<UserNotificationSettings> {
+    // Симуляция задержки сети
+    await this.delay(200 + Math.random() * 300);
+
+    return { ...this.userSettings };
+  }
+
+  async saveUserNotificationSettings(settings: UserNotificationSettings): Promise<void> {
+    // Симуляция задержки сети
+    await this.delay(300 + Math.random() * 500);
+
+    this.userSettings = { ...settings, lastUpdated: new Date().toISOString() };
+  }
+
   // Методы для управления mock-данными (для тестирования)
   
   /**
@@ -154,6 +169,103 @@ export class MockNotificationService implements INotificationService {
    */
   resetToDefaults(): void {
     this.notifications = [...mockNotifications];
+    this.userSettings = this.getDefaultUserSettings();
+  }
+
+  private getDefaultUserSettings(): UserNotificationSettings {
+    const defaultEventSettings: NotificationEventSetting[] = [
+      {
+        eventId: 'document_created',
+        eventName: 'Создание документа',
+        eventDescription: 'Уведомление о создании нового документа',
+        personalSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: true },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ],
+        substituteSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: false },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ]
+      },
+      {
+        eventId: 'document_approved',
+        eventName: 'Согласование документа',
+        eventDescription: 'Уведомление о согласовании документа',
+        personalSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: true },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ],
+        substituteSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: true },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: true }
+        ]
+      },
+      {
+        eventId: 'task_assigned',
+        eventName: 'Назначение задачи',
+        eventDescription: 'Уведомление о назначении новой задачи',
+        personalSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: true },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ],
+        substituteSettings: [
+          { channel: 'email', enabled: false },
+          { channel: 'push', enabled: false },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ]
+      },
+      {
+        eventId: 'task_completed',
+        eventName: 'Выполнение задачи',
+        eventDescription: 'Уведомление о выполнении задачи',
+        personalSettings: [
+          { channel: 'email', enabled: false },
+          { channel: 'push', enabled: true },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ],
+        substituteSettings: [
+          { channel: 'email', enabled: false },
+          { channel: 'push', enabled: false },
+          { channel: 'inApp', enabled: false },
+          { channel: 'sms', enabled: false }
+        ]
+      },
+      {
+        eventId: 'system_maintenance',
+        eventName: 'Техническое обслуживание',
+        eventDescription: 'Уведомления о плановых работах и обслуживании системы',
+        personalSettings: [
+          { channel: 'email', enabled: true },
+          { channel: 'push', enabled: false },
+          { channel: 'inApp', enabled: true },
+          { channel: 'sms', enabled: false }
+        ],
+        substituteSettings: [
+          { channel: 'email', enabled: false },
+          { channel: 'push', enabled: false },
+          { channel: 'inApp', enabled: false },
+          { channel: 'sms', enabled: false }
+        ]
+      }
+    ];
+
+    return {
+      userId: 'current-user',
+      eventSettings: defaultEventSettings,
+      lastUpdated: new Date().toISOString()
+    };
   }
 
   private delay(ms: number): Promise<void> {

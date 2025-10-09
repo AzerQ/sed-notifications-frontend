@@ -3,6 +3,7 @@ export { NotificationCenterWithStore } from './NotificationCenterWithStore';
 export { NotificationBell } from './NotificationBell';
 export { NotificationSidebar } from './NotificationSidebar';
 export { NotificationsBar } from './NotificationsBar';
+export { NotificationSettings } from './NotificationSettings';
 export { Modal } from './Modal';
 export { CompactNotification } from './NotificationCard/CompactNotification';
 export { CompactToastProvider } from './Toast/CompactToastProvider';

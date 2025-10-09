@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, Bell, Archive } from 'lucide-react';
+import { X, Bell, Archive, Settings } from 'lucide-react';
 import { InAppNotificationData } from './types';
 import { CompactNotification } from './NotificationCard/CompactNotification';
 
@@ -9,6 +9,7 @@ interface NotificationSidebarProps {
   notifications: InAppNotificationData[];
   onNotificationRead: (id: number) => void;
   onOpenFullHistory: () => void;
+  onOpenSettings: () => void;
   markAllAsRead: () => void;
   isLoading?: boolean; // Добавляем опциональный пропс для индикации загрузки
 }
@@ -19,6 +20,7 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
   notifications,
   onNotificationRead,
   onOpenFullHistory,
+  onOpenSettings,
   markAllAsRead,
   isLoading = false
 }) => {
@@ -87,7 +89,7 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
         </div>
 
         {/* Full History Button */}
-        <div className="p-4 border-b border-gray-200 flex-shrink-0" data-testid="notification-sidebar-full-history-section">
+        <div className="p-4 border-b border-gray-200 flex-shrink-0 space-y-3" data-testid="notification-sidebar-actions-section">
           <button
             onClick={handleFullHistoryClick}
             className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -95,6 +97,18 @@ export const NotificationSidebar: React.FC<NotificationSidebarProps> = ({
           >
             <Archive className="w-4 h-4" />
             <span>Вся история уведомлений</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              onClose();
+              onOpenSettings();
+            }}
+            className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+            data-testid="notification-sidebar-settings-button"
+          >
+            <Settings className="w-4 h-4" />
+            <span>Настройки уведомлений</span>
           </button>
         </div>
 

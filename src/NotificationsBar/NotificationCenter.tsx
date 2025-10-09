@@ -73,6 +73,7 @@ export const NotificationCenter: React.FC<NotificationCenterProps> = ({
         notifications={notifications}
         onNotificationRead={markNotificationAsRead}
         onOpenFullHistory={openFullHistoryFromSidebar}
+        onOpenSettings={() => {}}
       />
       
       <Modal 

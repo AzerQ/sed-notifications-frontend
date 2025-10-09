@@ -4,6 +4,7 @@ import { NotificationBell } from './NotificationBell';
 import { Modal } from './Modal';
 import { NotificationSidebar } from './NotificationSidebar';
 import { NotificationsBar } from './NotificationsBar';
+import { NotificationSettings } from './NotificationSettings';
 import { useNotificationStore } from '../store/NotificationStoreContext';
 import { InAppNotificationData } from './types';
 
@@ -20,6 +21,7 @@ export const NotificationCenterWithStore: React.FC<NotificationCenterProps> = ob
   const store = useNotificationStore();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   // Инициализация при первом рендере
   useEffect(() => {
@@ -58,6 +60,14 @@ export const NotificationCenterWithStore: React.FC<NotificationCenterProps> = ob
     setIsModalOpen(false);
   };
 
+  const handleOpenSettings = () => {
+    setIsSettingsOpen(true);
+  };
+
+  const handleSettingsClose = () => {
+    setIsSettingsOpen(false);
+  };
+
   const handleNotificationRead = async (id: number) => {
     await store.markAsRead(id);
   };
@@ -87,6 +97,7 @@ export const NotificationCenterWithStore: React.FC<NotificationCenterProps> = ob
         notifications={store.unreadNotifications}
         onNotificationRead={handleNotificationRead}
         onOpenFullHistory={handleOpenFullHistory}
+        onOpenSettings={handleOpenSettings}
         markAllAsRead={handleMarkAllAsRead}
         isLoading={store.isLoadingUnread}
       />
@@ -107,6 +118,14 @@ export const NotificationCenterWithStore: React.FC<NotificationCenterProps> = ob
           isLoading={store.isLoading}
         />
       </Modal>
+
+      {/* Модальное окно с настройками уведомлений */}
+      <NotificationSettings
+        isOpen={isSettingsOpen}
+        onClose={handleSettingsClose}
+        getUserSettings={store.getUserNotificationSettings.bind(store)}
+        saveUserSettings={store.saveUserNotificationSettings.bind(store)}
+      />
 
       {/* Индикатор состояния SignalR (для разработки) */}
       {process.env.NODE_ENV === 'development' && (

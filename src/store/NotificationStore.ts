@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { InAppNotificationData } from '../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings } from '../NotificationsBar/types';
 import { 
   INotificationService, 
   GetNotificationsParams, 
@@ -325,5 +325,14 @@ export class NotificationStore {
   dispose(): void {
     this.signalRService.offAllEvents();
     this.signalRService.stopConnection();
+  }
+
+  // Методы для настроек уведомлений
+  async getUserNotificationSettings(): Promise<UserNotificationSettings> {
+    return await this.notificationService.getUserNotificationSettings();
+  }
+
+  async saveUserNotificationSettings(settings: UserNotificationSettings): Promise<void> {
+    return await this.notificationService.saveUserNotificationSettings(settings);
   }
 }

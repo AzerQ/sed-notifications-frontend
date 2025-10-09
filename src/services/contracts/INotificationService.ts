@@ -1,4 +1,4 @@
-import { InAppNotificationData } from '../../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings } from '../../NotificationsBar/types';
 
 export interface PaginationParams {
   page: number;
@@ -62,4 +62,14 @@ export interface INotificationService {
    * Получить количество непрочитанных уведомлений
    */
   getUnreadCount(): Promise<number>;
+
+  /**
+   * Получить настройки уведомлений пользователя
+   */
+  getUserNotificationSettings(): Promise<UserNotificationSettings>;
+
+  /**
+   * Сохранить настройки уведомлений пользователя
+   */
+  saveUserNotificationSettings(settings: UserNotificationSettings): Promise<void>;
 }

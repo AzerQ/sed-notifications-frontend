@@ -53,3 +53,26 @@ export interface InAppNotificationData {
     actions: NotificationAction[];
 }
 
+// Типы для настроек уведомлений
+export type NotificationChannel = 'email' | 'sms' | 'push' | 'inApp';
+export type NotificationSettingGroup = 'personal' | 'substitute';
+
+export interface ChannelSetting {
+    channel: NotificationChannel;
+    enabled: boolean;
+}
+
+export interface NotificationEventSetting {
+    eventId: string; // Текстовый идентификатор события
+    eventName: string; // Человекопонятное наименование
+    eventDescription?: string; // Описание события
+    personalSettings: ChannelSetting[]; // Настройки для себя
+    substituteSettings: ChannelSetting[]; // Настройки по замещению
+}
+
+export interface UserNotificationSettings {
+    userId: string;
+    eventSettings: NotificationEventSetting[];
+    lastUpdated: string;
+}
+

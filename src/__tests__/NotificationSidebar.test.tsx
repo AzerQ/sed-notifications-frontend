@@ -11,6 +11,7 @@ describe('NotificationSidebar', () => {
     notifications: mockNotifications,
     onNotificationRead: jest.fn(),
     onOpenFullHistory: jest.fn(),
+    onOpenSettings: jest.fn(),
     markAllAsRead: jest.fn(),
   };
 
@@ -161,5 +162,22 @@ describe('NotificationSidebar', () => {
     await user.click(firstNotification as Element);
     
     expect(defaultProps.onNotificationRead).toHaveBeenCalledWith(1);
+  });
+
+  it('должен вызывать onOpenSettings при клике на кнопку настроек', () => {
+    render(<NotificationSidebar {...defaultProps} />);
+    
+    const settingsButton = screen.getByTestId('notification-sidebar-settings-button');
+    fireEvent.click(settingsButton);
+    
+    expect(defaultProps.onOpenSettings).toHaveBeenCalledTimes(1);
+    expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('должен отображать кнопку настроек', () => {
+    render(<NotificationSidebar {...defaultProps} />);
+    
+    expect(screen.getByTestId('notification-sidebar-settings-button')).toBeInTheDocument();
+    expect(screen.getByText('Настройки уведомлений')).toBeInTheDocument();
   });
 });
