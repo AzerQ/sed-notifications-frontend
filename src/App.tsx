@@ -61,6 +61,16 @@ const AppContent: React.FC = () => {
                                                 MobX + SignalR
                                             </span>
                                         </label>
+
+                                                                                <button
+                                            onClick={testSignalRNotification}
+                                            className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+                                            data-testid="app-test-signalr-button"
+                                        >
+                                            <Wifi className="w-4 h-4" />
+                                            <span>Тест SignalR</span>
+                                        </button>
+
                                         
                                         <button
                                             onClick={testToasts}
@@ -68,15 +78,7 @@ const AppContent: React.FC = () => {
                                             data-testid="app-test-toasts-button"
                                         >
                                             <Plus className="w-4 h-4" />
-                                            <span>Тест уведомлений</span>
-                                        </button>
-                                        <button
-                                            onClick={testSignalRNotification}
-                                            className="flex items-center space-x-2 bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
-                                            data-testid="app-test-signalr-button"
-                                        >
-                                            <Wifi className="w-4 h-4" />
-                                            <span>Тест SignalR</span>
+                                            <span>Тест alerts</span>
                                         </button>
                                         <button
                                             onClick={togglePosition}
