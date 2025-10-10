@@ -6,6 +6,8 @@ import { InAppNotificationData, ToastSettings, ToastSize, ToastPosition } from '
 interface CompactToast extends CompactNotificationData {
   toastId: number;
   isVisible: boolean;
+  createdAt: number; // Timestamp создания для индивидуального таймера
+  isClosing: boolean; // Флаг для отслеживания процесса закрытия
 }
 
 interface CompactToastProviderProps {
@@ -36,10 +38,26 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
     }
     
     const toastId = toastIdRef.current++;
-    setToasts(prev => [...prev, { ...notification, toastId, isVisible: true }]);
+    const createdAt = Date.now(); // Сохраняем точное время создания
+    const newToast: CompactToast = { 
+      ...notification, 
+      toastId, 
+      isVisible: true, 
+      createdAt,
+      isClosing: false
+    };
+    setToasts(prev => [...prev, newToast]);
   }, [shouldShowToasts]);
 
+  const markToastAsClosing = useCallback((toastId: number) => {
+    // Помечаем toast как закрывающийся, но не удаляем из массива
+    setToasts(prev => prev.map(toast => 
+      toast.toastId === toastId ? { ...toast, isClosing: true, isVisible: false } : toast
+    ));
+  }, []);
+
   const removeToast = useCallback((toastId: number) => {
+    // Удаляем toast из массива после завершения анимации
     setToasts(prev => prev.filter(toast => toast.toastId !== toastId));
   }, []);
 
@@ -53,29 +71,109 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
   }, []);
 
   // Компонент обертки для отдельного toast с логикой закрытия
-  const ToastWrapper: React.FC<{ toast: CompactToast; onClose: (id: number) => void; onRead: (id: number) => void; size: ToastSize; duration: number }> = ({ 
+  const ToastWrapper = React.memo<{ 
+    toast: CompactToast; 
+    onMarkAsClosing: (id: number) => void;
+    onRemove: (id: number) => void; 
+    onRead: (id: number) => void; 
+    size: ToastSize; 
+    duration: number 
+  }>(({ 
     toast, 
-    onClose, 
+    onMarkAsClosing,
+    onRemove, 
     onRead,
     size,
     duration
   }) => {
-    const [isVisible, setIsVisible] = useState(true);
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
+    const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
+    
+    // Сохраняем функции в ref, чтобы они не вызывали перерендер
+    const onMarkAsClosingRef = useRef(onMarkAsClosing);
+    const onRemoveRef = useRef(onRemove);
+    const onReadRef = useRef(onRead);
+    
+    useEffect(() => {
+      onMarkAsClosingRef.current = onMarkAsClosing;
+      onRemoveRef.current = onRemove;
+      onReadRef.current = onRead;
+    });
 
     useEffect(() => {
-      const timer = setTimeout(() => {
-        setIsVisible(false);
-        setTimeout(() => onClose(toast.toastId), 300);
-      }, duration * 1000); // Конвертируем секунды в миллисекунды
+      // Если toast уже помечен как закрывающийся, запускаем только таймер удаления
+      if (toast.isClosing) {
+        animationTimerRef.current = setTimeout(() => {
+          onRemoveRef.current(toast.toastId);
+        }, 300);
+        return () => {
+          if (animationTimerRef.current) {
+            clearTimeout(animationTimerRef.current);
+          }
+        };
+      }
 
-      return () => clearTimeout(timer);
-    }, [toast.toastId, onClose, duration]);
+      // Каждый toast имеет свой независимый таймер автозакрытия
+      const timeoutDuration = duration * 1000;
+      
+      timerRef.current = setTimeout(() => {
+        // Сначала помечаем как закрывающийся (запускает анимацию)
+        onMarkAsClosingRef.current(toast.toastId);
+        // Затем удаляем после завершения анимации
+        animationTimerRef.current = setTimeout(() => {
+          onRemoveRef.current(toast.toastId);
+        }, 300);
+      }, timeoutDuration);
+
+      // Очищаем таймеры при размонтировании компонента
+      return () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+        }
+        if (animationTimerRef.current) {
+          clearTimeout(animationTimerRef.current);
+        }
+      };
+    }, [toast.isClosing, toast.toastId, duration]); // Добавляем зависимости
 
     const handleClose = useCallback((e: React.MouseEvent) => {
       e.stopPropagation();
-      setIsVisible(false);
-      setTimeout(() => onClose(toast.toastId), 300);
-    }, [toast.toastId, onClose]);
+      // Отменяем автоматическое закрытие
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      // Помечаем как закрывающийся
+      onMarkAsClosingRef.current(toast.toastId);
+      // Удаляем после анимации
+      animationTimerRef.current = setTimeout(() => {
+        onRemoveRef.current(toast.toastId);
+      }, 300);
+    }, [toast.toastId]);
+
+    // Обработчик клика на уведомление
+    const handleNotificationClick = useCallback(() => {
+      // Отменяем автоматическое закрытие
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+      
+      // Помечаем как прочитанное
+      onReadRef.current(toast.id);
+      
+      // Открываем URL, если есть
+      if (toast.cardUrl) {
+        window.open(toast.cardUrl, '_blank');
+      }
+      
+      // Помечаем как закрывающийся
+      onMarkAsClosingRef.current(toast.toastId);
+      // Удаляем после анимации
+      animationTimerRef.current = setTimeout(() => {
+        onRemoveRef.current(toast.toastId);
+      }, 300);
+    }, [toast.id, toast.toastId, toast.cardUrl]);
 
     // Преобразуем CompactNotificationData в InAppNotificationData для совместимости
     const adaptedNotification: InAppNotificationData = {
@@ -89,7 +187,8 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
       read: toast.read,
       starred: false,
       delegate: false,
-      actions: []
+      actions: [],
+      cardUrl: toast.cardUrl
     };
 
     // Определяем классы размера
@@ -102,12 +201,14 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
     return (
       <div
         className={`${sizeClasses[size]} w-full rounded-lg shadow-lg transform transition-all duration-300 mb-2 bg-white border border-gray-200 ${
-          isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
+          toast.isVisible && !toast.isClosing ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
         }`}
         data-testid="compact-toast-notification"
         data-toast-id={toast.toastId}
         data-notification-id={toast.id}
         data-size={size}
+        data-is-closing={toast.isClosing}
+        onClick={handleNotificationClick}
       >
         <div className="relative">
           {/* Кнопка закрытия */}
@@ -126,13 +227,20 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
           {/* Компактное уведомление */}
           <CompactNotification
             notification={adaptedNotification}
-            onRead={onRead}
+            onRead={() => {}} // Пустая функция, т.к. обработка клика происходит в handleNotificationClick
             size={size}
+            disableClick={true} // Отключаем встроенный обработчик, используем обработчик из ToastWrapper
           />
         </div>
       </div>
     );
-  };
+  }, (prevProps, nextProps) => {
+    // Мемоизируем компонент - перерендериваем только если изменились важные свойства
+    return prevProps.toast.toastId === nextProps.toast.toastId && 
+           prevProps.toast.read === nextProps.toast.read &&
+           prevProps.toast.isClosing === nextProps.toast.isClosing &&
+           prevProps.toast.isVisible === nextProps.toast.isVisible;
+  });
 
   const containerClasses = position === 'top'
     ? 'fixed top-4 right-4 z-50'
@@ -148,7 +256,8 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({
             <ToastWrapper
               key={toast.toastId}
               toast={toast}
-              onClose={removeToast}
+              onMarkAsClosing={markToastAsClosing}
+              onRemove={removeToast}
               onRead={handleNotificationRead}
               size={size}
               duration={duration}

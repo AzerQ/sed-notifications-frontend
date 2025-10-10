@@ -6,14 +6,21 @@ interface CompactNotificationProps {
   notification: InAppNotificationData;
   onRead: (id: number) => void;
   size?: ToastSize;
+  disableClick?: boolean; // Отключить встроенный обработчик клика (для toast)
 }
 
 export const CompactNotification: React.FC<CompactNotificationProps> = ({ 
   notification, 
   onRead,
-  size = 'medium'
+  size = 'medium',
+  disableClick = false
 }) => {
   const handleClick = () => {
+    // Если отключен встроенный клик (например, в toast), не выполняем действия
+    if (disableClick) {
+      return;
+    }
+    
     // Если есть ссылка, открываем её
     if (notification.cardUrl) {
       window.open(notification.cardUrl, '_blank');
@@ -57,10 +64,10 @@ export const CompactNotification: React.FC<CompactNotificationProps> = ({
     <div
       role="button"
       tabIndex={0}
-      onClick={handleClick}
+      onClick={disableClick ? undefined : handleClick}
       className={`
-        ${currentSize.padding} border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-150
-        ${notification.cardUrl ? 'hover:bg-blue-50' : ''}
+        ${currentSize.padding} border-b border-gray-100 ${disableClick ? '' : 'hover:bg-gray-50 cursor-pointer'} transition-colors duration-150
+        ${!disableClick && notification.cardUrl ? 'hover:bg-blue-50' : ''}
       `}
       data-testid="compact-notification"
       data-notification-id={notification.id}

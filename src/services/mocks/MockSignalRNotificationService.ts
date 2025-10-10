@@ -111,31 +111,36 @@ export class MockSignalRNotificationService implements ISignalRNotificationServi
         title: 'Новый документ на согласование',
         type: 'document',
         subtype: 'Входящий документ',
-        author: 'Петров И.И.'
+        author: 'Петров И.И.',
+        cardUrl: 'https://example.com/document/123'
       },
       {
         title: 'Напоминание о встрече',
         type: 'other',
         subtype: 'Напоминание',
-        author: 'Календарь'
+        author: 'Календарь',
+        cardUrl: 'https://example.com/meeting/456'
       },
       {
         title: 'Обновление системы',
         type: 'system',
         subtype: 'update',
-        author: 'Система'
+        author: 'Система',
+        cardUrl: 'https://example.com/updates'
       },
       {
         title: 'Новая задача',
         type: 'task',
         subtype: 'assignment',
-        author: 'Сидорова М.П.'
+        author: 'Сидорова М.П.',
+        cardUrl: 'https://example.com/task/789'
       },
       {
         title: 'Требуется подпись',
         type: 'task',
         subtype: 'approval',
-        author: 'Козлов А.В.'
+        author: 'Козлов А.В.',
+        cardUrl: 'https://example.com/approval/321'
       }
     ];
 
@@ -159,6 +164,7 @@ export const convertToCompactNotification = (notification: InAppNotificationData
     subtype: notification.subtype,
     author: notification.author,
     date: notification.date,
-    read: notification.read
+    read: notification.read,
+    cardUrl: notification.cardUrl
   };
 };

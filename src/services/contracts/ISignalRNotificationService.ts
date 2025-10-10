@@ -8,6 +8,7 @@ export interface CompactNotificationData {
   author: string;
   date: string;
   read: boolean;
+  cardUrl?: string;
 }
 
 export interface ISignalRNotificationService {
