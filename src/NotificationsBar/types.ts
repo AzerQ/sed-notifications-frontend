@@ -76,3 +76,19 @@ export interface UserNotificationSettings {
     lastUpdated: string;
 }
 
+// Типы для настроек всплывающих уведомлений (тостов)
+export type ToastSize = 'small' | 'medium' | 'large';
+export type ToastPosition = 'top' | 'bottom';
+
+export interface ToastSettings {
+    size: ToastSize;
+    duration: number; // в секундах
+    position: ToastPosition;
+}
+
+export const DEFAULT_TOAST_SETTINGS: ToastSettings = {
+    size: 'medium',
+    duration: 4,
+    position: 'bottom'
+};
+

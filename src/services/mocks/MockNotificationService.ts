@@ -3,7 +3,7 @@ import {
   PaginatedResponse, 
   GetNotificationsParams 
 } from '../contracts/INotificationService';
-import { InAppNotificationData, UserNotificationSettings, NotificationEventSetting } from '../../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings, NotificationEventSetting, ToastSettings, DEFAULT_TOAST_SETTINGS } from '../../NotificationsBar/types';
 import { mockNotifications } from '../../MockNotifications';
 
 export class MockNotificationService implements INotificationService {
@@ -139,6 +139,32 @@ export class MockNotificationService implements INotificationService {
     await this.delay(300 + Math.random() * 500);
 
     this.userSettings = { ...settings, lastUpdated: new Date().toISOString() };
+  }
+
+  async getToastSettings(): Promise<ToastSettings> {
+    // Симуляция задержки сети
+    await this.delay(100 + Math.random() * 200);
+
+    // Получаем настройки из localStorage
+    const storedSettings = localStorage.getItem('toast-settings');
+    if (storedSettings) {
+      try {
+        return JSON.parse(storedSettings);
+      } catch (error) {
+        console.error('Ошибка при парсинге настроек тостов:', error);
+      }
+    }
+
+    // Возвращаем настройки по умолчанию
+    return { ...DEFAULT_TOAST_SETTINGS };
+  }
+
+  async saveToastSettings(settings: ToastSettings): Promise<void> {
+    // Симуляция задержки сети
+    await this.delay(200 + Math.random() * 300);
+
+    // Сохраняем настройки в localStorage
+    localStorage.setItem('toast-settings', JSON.stringify(settings));
   }
 
   // Методы для управления mock-данными (для тестирования)

@@ -1,4 +1,4 @@
-import { InAppNotificationData, UserNotificationSettings } from '../../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings, ToastSettings } from '../../NotificationsBar/types';
 
 export interface PaginationParams {
   page: number;
@@ -72,4 +72,14 @@ export interface INotificationService {
    * Сохранить настройки уведомлений пользователя
    */
   saveUserNotificationSettings(settings: UserNotificationSettings): Promise<void>;
+
+  /**
+   * Получить настройки всплывающих уведомлений (тостов)
+   */
+  getToastSettings(): Promise<ToastSettings>;
+
+  /**
+   * Сохранить настройки всплывающих уведомлений (тостов)
+   */
+  saveToastSettings(settings: ToastSettings): Promise<void>;
 }

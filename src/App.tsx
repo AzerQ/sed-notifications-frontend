@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { observer } from 'mobx-react-lite';
 import { Plus, Wifi } from 'lucide-react';
 import { NotificationCenter, NotificationCenterWithStore } from "./NotificationsBar";
 import { mockNotifications } from "./MockNotifications";
@@ -7,7 +8,7 @@ import { ToastProvider } from "./NotificationsBar/Toast/ToastProvider";
 import { CompactToastProvider } from "./NotificationsBar/Toast/CompactToastProvider";
 import { NotificationStoreProvider, signalRService, useNotificationStore } from "./store/NotificationStoreContext";
 
-const AppContent: React.FC = () => {
+const AppContent: React.FC = observer(() => {
     const [notifications, setNotifications] = useState<InAppNotificationData[]>(mockNotifications);
     const [useNewStore, setUseNewStore] = useState(true);
     const store = useNotificationStore();
@@ -29,7 +30,10 @@ const AppContent: React.FC = () => {
     };
 
     return (
-        <CompactToastProvider>
+        <CompactToastProvider 
+            settings={store.toastSettings} 
+            shouldShowToasts={store.shouldShowToasts}
+        >
             {({ showCompactToast }) => {
                 // Устанавливаем колбек для показа всплывающих уведомлений
                 useEffect(() => {
@@ -155,7 +159,7 @@ const AppContent: React.FC = () => {
             }}
         </CompactToastProvider>
     );
-};
+});
 
 const App: React.FC = () => {
     return (

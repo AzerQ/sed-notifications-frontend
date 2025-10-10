@@ -1,5 +1,5 @@
 import { makeAutoObservable, runInAction } from 'mobx';
-import { InAppNotificationData, UserNotificationSettings } from '../NotificationsBar/types';
+import { InAppNotificationData, UserNotificationSettings, ToastSettings, DEFAULT_TOAST_SETTINGS } from '../NotificationsBar/types';
 import { 
   INotificationService, 
   GetNotificationsParams, 
@@ -36,6 +36,13 @@ export interface NotificationStoreState {
   
   // SignalR состояние
   isSignalRConnected: boolean;
+  
+  // UI состояние
+  isSidebarOpen: boolean;
+  isModalOpen: boolean;
+  
+  // Настройки тостов
+  toastSettings: ToastSettings;
 }
 
 export class NotificationStore {
@@ -58,6 +65,13 @@ export class NotificationStore {
   signalRError: string | null = null;
   
   isSignalRConnected = false;
+  
+  // UI состояние
+  isSidebarOpen = false;
+  isModalOpen = false;
+  
+  // Настройки тостов
+  toastSettings: ToastSettings = { ...DEFAULT_TOAST_SETTINGS };
 
   // Колбек для показа всплывающих уведомлений
   private showCompactToastCallback?: (notification: CompactNotificationData) => void;
@@ -68,6 +82,7 @@ export class NotificationStore {
   ) {
     makeAutoObservable(this);
     this.initializeSignalR();
+    this.loadToastSettings();
   }
 
   // Метод для установки колбека показа всплывающих уведомлений
@@ -269,8 +284,8 @@ export class NotificationStore {
 
   // Обработчики SignalR событий
   private handleNewNotification(compactNotification: CompactNotificationData): void {
-    // Показываем всплывающее уведомление
-    if (this.showCompactToastCallback) {
+    // Показываем всплывающее уведомление только если не открыты sidebar или modal
+    if (this.shouldShowToasts && this.showCompactToastCallback) {
       this.showCompactToastCallback(compactNotification);
     }
 
@@ -334,5 +349,49 @@ export class NotificationStore {
 
   async saveUserNotificationSettings(settings: UserNotificationSettings): Promise<void> {
     return await this.notificationService.saveUserNotificationSettings(settings);
+  }
+
+  // Методы для UI состояния
+  setSidebarOpen(isOpen: boolean): void {
+    this.isSidebarOpen = isOpen;
+  }
+
+  setModalOpen(isOpen: boolean): void {
+    this.isModalOpen = isOpen;
+  }
+
+  // Геттер для проверки, нужно ли показывать тосты
+  get shouldShowToasts(): boolean {
+    // Не показываем тосты, если открыт sidebar или modal
+    return !this.isSidebarOpen && !this.isModalOpen;
+  }
+
+  // Методы для настроек тостов
+  async loadToastSettings(): Promise<void> {
+    try {
+      const settings = await this.notificationService.getToastSettings();
+      runInAction(() => {
+        this.toastSettings = settings;
+      });
+    } catch (error) {
+      console.error('Ошибка загрузки настроек тостов:', error);
+      // Оставляем настройки по умолчанию
+    }
+  }
+
+  async getToastSettings(): Promise<ToastSettings> {
+    return await this.notificationService.getToastSettings();
+  }
+
+  async saveToastSettings(settings: ToastSettings): Promise<void> {
+    try {
+      await this.notificationService.saveToastSettings(settings);
+      runInAction(() => {
+        this.toastSettings = settings;
+      });
+    } catch (error) {
+      console.error('Ошибка сохранения настроек тостов:', error);
+      throw error;
+    }
   }
 }

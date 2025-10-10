@@ -1,7 +1,7 @@
 import React, { useRef, useState, useCallback, useEffect } from 'react';
 import { CompactNotificationData } from '../../services/contracts/ISignalRNotificationService';
 import { CompactNotification } from '../NotificationCard/CompactNotification';
-import { InAppNotificationData } from '../types';
+import { InAppNotificationData, ToastSettings, ToastSize, ToastPosition } from '../types';
 
 interface CompactToast extends CompactNotificationData {
   toastId: number;
@@ -11,19 +11,33 @@ interface CompactToast extends CompactNotificationData {
 interface CompactToastProviderProps {
   children: (props: {
     showCompactToast: (notification: CompactNotificationData) => void;
-    position: 'top' | 'bottom';
+    position: ToastPosition;
   }) => React.ReactNode;
+  settings?: ToastSettings;
+  shouldShowToasts?: boolean;
 }
 
-export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ children }) => {
+export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ 
+  children, 
+  settings,
+  shouldShowToasts = true 
+}) => {
   const [toasts, setToasts] = useState<CompactToast[]>([]);
   const toastIdRef = useRef(0);
-  const [position] = useState<'top' | 'bottom'>('top');
+  
+  // Используем настройки из пропсов или значения по умолчанию
+  const toastSettings = settings || { size: 'medium' as ToastSize, duration: 4, position: 'bottom' as ToastPosition };
+  const { size, duration, position } = toastSettings;
 
   const showCompactToast = useCallback((notification: CompactNotificationData) => {
+    // Не показываем тосты, если shouldShowToasts = false
+    if (!shouldShowToasts) {
+      return;
+    }
+    
     const toastId = toastIdRef.current++;
     setToasts(prev => [...prev, { ...notification, toastId, isVisible: true }]);
-  }, []);
+  }, [shouldShowToasts]);
 
   const removeToast = useCallback((toastId: number) => {
     setToasts(prev => prev.filter(toast => toast.toastId !== toastId));
@@ -39,10 +53,12 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ chil
   }, []);
 
   // Компонент обертки для отдельного toast с логикой закрытия
-  const ToastWrapper: React.FC<{ toast: CompactToast; onClose: (id: number) => void; onRead: (id: number) => void }> = ({ 
+  const ToastWrapper: React.FC<{ toast: CompactToast; onClose: (id: number) => void; onRead: (id: number) => void; size: ToastSize; duration: number }> = ({ 
     toast, 
     onClose, 
-    onRead 
+    onRead,
+    size,
+    duration
   }) => {
     const [isVisible, setIsVisible] = useState(true);
 
@@ -50,10 +66,10 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ chil
       const timer = setTimeout(() => {
         setIsVisible(false);
         setTimeout(() => onClose(toast.toastId), 300);
-      }, 5000); // 5 секунд
+      }, duration * 1000); // Конвертируем секунды в миллисекунды
 
       return () => clearTimeout(timer);
-    }, [toast.toastId, onClose]);
+    }, [toast.toastId, onClose, duration]);
 
     const handleClose = useCallback((e: React.MouseEvent) => {
       e.stopPropagation();
@@ -76,14 +92,22 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ chil
       actions: []
     };
 
+    // Определяем классы размера
+    const sizeClasses = {
+      small: 'max-w-xs text-sm',
+      medium: 'max-w-sm text-base',
+      large: 'max-w-md text-lg'
+    };
+
     return (
       <div
-        className={`max-w-sm w-full rounded-lg shadow-lg transform transition-all duration-300 mb-2 bg-white border border-gray-200 ${
+        className={`${sizeClasses[size]} w-full rounded-lg shadow-lg transform transition-all duration-300 mb-2 bg-white border border-gray-200 ${
           isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
         }`}
         data-testid="compact-toast-notification"
         data-toast-id={toast.toastId}
         data-notification-id={toast.id}
+        data-size={size}
       >
         <div className="relative">
           {/* Кнопка закрытия */}
@@ -103,6 +127,7 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ chil
           <CompactNotification
             notification={adaptedNotification}
             onRead={onRead}
+            size={size}
           />
         </div>
       </div>
@@ -125,6 +150,8 @@ export const CompactToastProvider: React.FC<CompactToastProviderProps> = ({ chil
               toast={toast}
               onClose={removeToast}
               onRead={handleNotificationRead}
+              size={size}
+              duration={duration}
             />
           ))}
         </div>
